@@ -2,94 +2,115 @@
     <?php echo \Illuminate\View\Factory::parentPlaceholder('style'); ?>
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset('static/less/news.css')); ?>?ver=<?php echo e(config('app.asset_version')); ?>"/>
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset('static/less/pagination.css')); ?>?ver=<?php echo e(config('app.asset_version')); ?>"/>
+    <style>
+        @media screen and (min-width: 1024px) {
+            .guide-scroll{
+                display: none;
+            }
+        }
+    </style>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('script'); ?>
     <?php echo \Illuminate\View\Factory::parentPlaceholder('script'); ?>
-    <script src="<?php echo e(asset('static/js/jquery.waypoints.min.js')); ?>?ver=<?php echo e(config('app.asset_version')); ?>"></script>
     <script>
-        $(function(){
-            $('.cardList > li').waypoint(function(){
-                this.element.classList.add('show');
-            },{
-                offset: '70%'
-            });
-        });
-        $(window).scroll(function() {
-            bgEffect()
 
-        });
+        $(document).ready(function(){
+            const $ScrollWrap = $(window)
+            // 监听滚动停止
+            let t1 = 0;
+            let t2 = 0;
+            let timer = null; // 定时器
+            $ScrollWrap.on("touchstart", function(){
 
-        function bgEffect(){
-            let top = document.scrollingElement.scrollTop; //触发滚动条，记录数值
-            let banner_height = $('.container-bg').height()-60;
-            let opacity = 1-top/banner_height;
-            $('.container-bg').css('opacity',opacity);
-            if(opacity<=0.6){
-                $('.page-title').css('color','rgba(0,0,0,'+top/banner_height+')');
-            }else{
-                $('.page-title').css('color','#fff');
+                // 触摸开始 ≈ 滚动开始
+            })
+            $ScrollWrap.on("scroll", function(){
+                $('.elevator').addClass('slipOut')
+
+                // 滚动
+                clearTimeout(timer)
+                timer = setTimeout(isScrollEnd, 300)
+                t1 = $ScrollWrap.scrollTop()
+                if(t1<=0){
+
+                }else{
+
+                }
+            })
+            function isScrollEnd() {
+                t2 = $ScrollWrap.scrollTop();
+                if(t2 == t1){
+                    $('.elevator').removeClass('slipOut')
+
+                    clearTimeout(timer)
+                }
+
             }
 
-            if(($(window).scrollTop() + $(window).height()).toFixed(0) == $(document).height()){
-                $('.container-bg').css('opacity',0);
-            }
 
-
-        }
+        })
     </script>
 <?php $__env->stopSection(); ?>
 
 
+<?php $__env->startSection('title-before',$cate?$cate->name:"相關資訊"); ?>
+<?php $__env->startSection('topic-title',$cate?$cate->name:"相關資訊"); ?>
+<?php $__env->startSection('topic-sub',$cate?$cate->sub_name:"NEWS"); ?>
+
+<?php $__env->startSection('banner-section-append'); ?>
+    <div class="elevator">
+        <a href="<?php echo e(url('product')); ?>">
+            <p class="p1">購買<?php echo e(app('cache.config')->get('site_name')); ?></p>
+            <p class="ico"><i class="iconfont">&#xeb21;</i></p>
+        </a>
+    </div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('breadcrumb'); ?>
+    <ul class="breadcrumb">
+        <li><a href="<?php echo e(url('/')); ?>">首页</a></li>
+        <li class="active"><?php echo e($cate->name); ?></li>
+    </ul>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
-    <?php ($newsBg = app('cache.config')->get('page_news_back_img_pc')); ?>
-    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($newsBg): ?>
-    <div class="container-bg" style="background-image: url('<?php echo e(asset_upload($newsBg)); ?>')">
-    <?php else: ?>
-    <div class="container-bg">
-    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-        <p class="bg-text"><?php echo app('cache.config')->get('page_news_title'); ?></p>
-        <p class="beat"><i class="iconfont">&#xe784;</i></p>
-    </div>
-    <h1 class="page-title">瘦身專欄</h1>
-    <div class="news-wrap" data-track-section="news.list" data-track-section-view data-track-section-label="文章列表">
-        <ul class="breadcrumb">
-            <li><a href="<?php echo e(url('/')); ?>">首頁</a></li>
-            <li class="active">瘦身專欄</li>
-        </ul>
-        <ul class="cardList vertical">
+    <div class="container no-curtain">
 
-            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <li class="">
-                    <div class="item ">
-                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($item->img): ?>
-                        <div class="Img"><a href="<?php echo e(url('news/'.$item->id)); ?>" data-track-section="news.list" data-track-name="news.list.item" data-observer="文章-<?php echo e($item->title); ?>"><img src="<?php echo e(asset('uploads/'.$item->img)); ?>" alt="<?php echo e($item->title); ?>" loading="lazy" decoding="async"></a></div>
-                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
-                        <div class="Txt">
-                            <div class="newsInfoIdxBox">
-                                <div class="newsDateBox">
-                                    <span class="day"><?php echo e($item->release_at->format('d')); ?></span>
-                                    <span class="ym"><?php echo e(substr($item->release_at->format('Y'),-2)); ?> <?php echo e($item->release_at->format('M')); ?></span>
+        <div class="main">
+            <div class="news-body">
+
+                <ul class="news">
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li class="item">
+
+                            <a class="ls" href="<?php echo e(url($item->cate->uri.'/'.$item->id)); ?>">
+                                <div class="yiv">
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($item->img): ?>
+                                    <div class="img-wrapper"><img src="<?php echo e(asset('uploads/'.$item->img)); ?>" alt="<?php echo e($item->img_alt?:$item->title); ?>"></div>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <div class="info">
+                                        
+                                        <p class="new-title"><?php echo e($item->title); ?></p>
+                                    </div>
+                                    <div class="go"><span>more</span></div>
                                 </div>
-                                <div class="newsTitle">
-                                    <h3><a href="<?php echo e(url('news/'.$item->id)); ?>" data-track-section="news.list" data-track-name="news.list.title" data-observer="文章標題-<?php echo e($item->title); ?>"><?php echo e($item->title); ?></a></h3>
-                                </div>
-                            </div>
-                            <p class="ellipsis" style="overflow-wrap: break-word;">
-                                <?php echo e(\Illuminate\Support\Str::limit($item->brief?$item->brief:strip_tags($item->content),680)); ?>
 
-                            </p>
-                        </div>
-                    </div>
-                </li>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                            </a>
 
+                        </li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                </ul>
+                <div class="pagination">
+                    <?php echo $news->links(); ?>
 
-        </ul>
+                </div>
 
-        <?php echo e($news->links()); ?>
-
+            </div>
+        </div>
     </div>
+
+
 
 <?php $__env->stopSection(); ?>
 

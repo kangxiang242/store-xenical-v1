@@ -187,108 +187,9 @@ function array_get($array,$key,$default=null){
 }
 
 if (! function_exists('template')) {
-    /**
-     * Get the evaluated view contents for the given view.
-     *
-     * @param  string|null  $view
-     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
-     * @param  array  $mergeData
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
-     */
     function template($view = null, $data = [], $mergeData = []){
-        $device = \App\Handlers\DeviceTypeHandlers::isMobile() ? 'mobile' : 'web';
-
-        return view($device.'.'.$view, $data, $mergeData);
-    }
-}
-
-
-
-function is_mobile(){
-    return \App\Handlers\DeviceTypeHandlers::isMobile();
-}
-
-if (! function_exists('is_googlebot')) {
-    function is_googlebot()
-    {
-        $user_agent = request()->header('user-agent');
-
-        return preg_match('/(Googlebot|Chrome-Lighthouse)/i', $user_agent);
-    }
-}
-
-if (! function_exists('vite_tags')) {
-    function vite_tags($entrypoints = ['resources/js/vite-app.js']){
-        $entrypoints = (array) $entrypoints;
-        $hotFile = public_path('hot');
-        $devServer = null;
-
-        if (is_file($hotFile)) {
-            $devServer = rtrim(trim(file_get_contents($hotFile)), '/');
-        } elseif (filled(env('VITE_DEV_SERVER_URL'))) {
-            // 勿用「埠號可連線」推測 Vite：5173 上常見其他程式，會誤載 dev 標籤而得到 404。
-            $devServer = rtrim((string) env('VITE_DEV_SERVER_URL'), '/');
-        }
-
-        if ($devServer) {
-            $tags = [
-                '<script type="module" src="'.e($devServer.'/@vite/client').'"></script>',
-            ];
-
-            foreach ($entrypoints as $entrypoint) {
-                $tags[] = '<script type="module" src="'.e($devServer.'/'.ltrim($entrypoint, '/')).'"></script>';
-            }
-
-            return implode("\n", $tags);
-        }
-
-        $manifestPath = public_path('build/manifest.json');
-
-        if (! is_file($manifestPath)) {
-            return '';
-        }
-
-        $manifest = json_decode(file_get_contents($manifestPath), true);
-        $tags = [];
-
-        foreach ($entrypoints as $entrypoint) {
-            if (! isset($manifest[$entrypoint])) {
-                continue;
-            }
-
-            $asset = $manifest[$entrypoint];
-
-            foreach ($asset['css'] ?? [] as $css) {
-                $tags[] = '<link rel="stylesheet" href="'.e(asset('build/'.$css)).'">';
-            }
-
-            if (isset($asset['file'])) {
-                $tags[] = '<script type="module" src="'.e(asset('build/'.$asset['file'])).'"></script>';
-            }
-        }
-
-        return implode("\n", $tags);
-    }
-}
-
-if (! function_exists('release_token')) {
-    function release_token(): ?string
-    {
-        return \App\Models\Release::whereNotNull('token')
-            ->latest('deployed_at')
-            ->value('token');
-    }
-}
-
-if (! function_exists('release_asset')) {
-    function release_asset(string $path): string
-    {
-        $token = release_token();
-        $version = config('app.asset_version', '1.0.0');
-        $cacheBuster = $token ?: $version;
-        $prefix = asset('/static');
-        $sep = str_contains($path, '?') ? '&' : '?';
-        return "{$prefix}/{$path}{$sep}{$cacheBuster}";
+        $device = is_mobile_domain()?"mobile":"web";
+        return view($device.'.'.$view,$data,$mergeData);
     }
 }
 
@@ -297,14 +198,10 @@ function getMainDomain(){
     return array_get($parse_url,'host');
 }
 
-
 function is_mobile_domain(){
     $m_url = config('app.m_url');
     $parse = parse_url($m_url);
-
-
     if(array_get($parse,'host') && request()->getHost() == array_get($parse,'host')){
-
         if(!array_get($parse,'port')){
             return true;
         }else{
@@ -317,41 +214,14 @@ function is_mobile_domain(){
     return false;
 }
 
-/**
- * 颜色加深算法
- * @param $color
- * @param $amt
- * @return \Dcat\Admin\Support\string|string
- */
-
 function colorDarken($color,$amt){
     $color = str_replace('#', '', $color);
-
     if (strlen($color) != 6){ return '000000'; }
-
     $rgb = '';
-
     for ($x=0;$x<3;$x++){
-
         $c = hexdec(substr($color,(2*$x),2)) - $amt;
-
         $c = ($c < 0) ? 0 : dechex($c);
-
         $rgb .= (strlen($c) < 2) ? '0'.$c : $c;
-
     }
-
     return '#'.$rgb;
-    //return \Dcat\Admin\Support\Helper::colorDarken($color,$amt);
 }
-
-if (! function_exists('template')) {
-    /**
-     * Get the evaluated view contents for the given view.
-     *
-     * @param  string|null  $view
-     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
-     * @param  array  $mergeData
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
-     */
-    

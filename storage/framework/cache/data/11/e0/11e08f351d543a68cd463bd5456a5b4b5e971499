@@ -1,0 +1,26 @@
+1786082148s:434:"header .logo-sec img{
+width:auto;
+height:30px;
+}
+.header .c-logo img {
+    height: 30px;
+}
+
+@media screen and (max-width: 1024px) {
+.carousel .picture .topic .pic .back {
+    height: 50vh;
+    background-position: 60% 50%;
+}
+.carousel .picture {
+  height: 50vh;
+}
+.carousel.shown .picture .swiper-container {
+    height: 53vh;
+}
+header .logo-sec img{
+height:20px;
+}
+.header .c-logo img {
+    height: 20px;
+}
+}";

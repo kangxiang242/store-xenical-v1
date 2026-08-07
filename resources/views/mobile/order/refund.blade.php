@@ -11,15 +11,39 @@
     <script src="{{ asset('static/js/jquery.contip.js') }}"></script>
     <script src="{{ asset('static/js/sweetalert2.js') }}"></script>
     <script src="{{ asset('static/js/api.js') }}"></script>
+    <script>
+        $('.pictures').change(function(){
+            var files = event.target.files, file;
+            if (files && files.length > 0) {
+                // 获取目前上传的文件
+                file = files[0];// 文件大小校验的动作
+                if(file.size > 1024 * 1024 * 5) {
+                    alert('图片大小不能超过 5MB!');
+                    return false;
+                }
+                // 获取 window 的 URL 工具
+                var URL = window.URL || window.webkitURL;
+                // 通过 file 生成目标 url  获取真实的路径
+                var imgURL = URL.createObjectURL(file);
+                //用attr将img的src属性改成获得的url
+                $(this).next().find('.show-how').attr('src',imgURL);
+                $(this).next().addClass('have')
+            }
+        });
 
+        $('.remove-pic').click(function(){
+            $(this).siblings('.show-how').removeAttr('src');
+            $(this).parent().removeClass('have')
+            $(this).parent().siblings('input').val('')
+        })
 
+    </script>
 @stop
 
-@section('title-before','聯絡我們')
+@section('title-before','商品退換服務')
 
-@section('billboard-title','聯絡我們')
+@section('billboard-title','商品退換服務')
 
-@section('billboard-desc','禮來致力於為我們的客戶提供資訊。若您有疑問，請聯絡我們。')
 
 @section('content')
 
@@ -28,18 +52,18 @@
     <div class="side">
 
         <div class="left-side">
-            <div class="head">
+{{--            <div class="head">
                 <p class="desc">
                     {!! app('cache.config')->get('page_lianluo_desc') !!}
                 </p>
-            </div>
+            </div>--}}
             <div class="body">
-                <form action="" method="post" onsubmit="return messageStore()" id="message-form">
+                <form action="" method="post" onsubmit="return refundStore()" id="refund-form" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="form-main">
                         <div class="form-group">
                             <label>姓名：</label>
-                            <input class="form-control" type="text" name="name" placeholder="請輸入你的稱呼">
+                            <input class="form-control" type="text" name="name" placeholder="請輸入訂購人姓名">
                         </div>
                         <div class="form-group">
                             <label>性別：</label>
@@ -69,28 +93,37 @@
                         </div>
                         <div class="form-group">
                             <label>聯絡電話：</label>
-                            <input class="form-control" type="text" name="phone" placeholder="請輸入聯絡你的電話號碼">
+                            <input class="form-control" type="text" name="phone" placeholder="請輸入訂購人電話">
                         </div>
+
                         <div class="form-group">
-                            <label>E-mail：</label>
-                            <input class="form-control" type="text" name="email" placeholder="請輸入聯絡你的電子郵箱">
-                        </div>
-                        <div class="form-group">
-                            <label>留言類型：</label>
+                            <label>服務類型：</label>
                             <select class="form-control" name="type">
-                                <option value="1">售前咨詢</option>
-                                <option value="2">劑量咨詢</option>
-                                <option value="3">修改訂單資訊</option>
-                                <option value="5">意見或建議</option>
-                                <option value="6">退換貨</option>
-                                <option value="0" selected>其它</option>
+                                <option value="1">換貨/補寄</option>
+                                <option value="2">退貨及退款</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label>留言內容：</label>
-                            <textarea class="form-control form-textarea" name="content" id="" cols="30" rows="10"></textarea>
+                            <label>理由說明：</label>
+                            <textarea class="form-control form-textarea" name="content" id="" cols="30" rows="10" placeholder="如：運輸或宅配過程中造成商品包裝損壞"></textarea>
                         </div>
+
+                        <div class="appendix">
+                            <label>附加相片：</label>
+
+                            <div class="atlas">
+                                <div class="seat">
+                                    <input type="file" class="pictures file_hide" name="pictures[]" id="pictures-1" accept="image/*">
+                                    <label class="seize"  for="pictures-1">
+                                        <a class="remove-pic" href="javascript:;"><i class="iconfont">&#xeca0;</i></a>
+                                        <i class="add-pic iconfont">&#xe620;</i>
+                                        <img class="show-how" src="" alt="商品退換服務">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <button class="form-btn">確認送出</button>
 

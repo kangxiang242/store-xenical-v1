@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\Product;
+use App\Models\ProductTag;
 use Illuminate\Support\Facades\Cache;
 class ProductRepository extends Repository
 {

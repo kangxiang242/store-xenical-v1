@@ -6,7 +6,6 @@ namespace App\Repositories;
 
 use App\Models\Message;
 
-use App\Models\Order;
 use App\Services\VehicleService;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -20,7 +19,7 @@ class MessageRepository extends Repository
      * @return mixed
      */
     public function store(array $data){
-        $data = Arr::only($data,['name','email','phone','content','type']);
+        $data = Arr::only($data,['name','email','phone','content','type','sex']);
         $insert = array_merge($data,['ip'=>VehicleService::IP(),'user_agent'=>VehicleService::userAgent()]);
         return $this->model()->create($insert);
     }

@@ -1,7 +1,8 @@
-@extends('web.layout.layout')
+@extends(is_mobile_domain()?"mobile.layout":"web.layout")
 @section('title', "Not Found")
 @section('keywords', "")
 @section('description', "")
+@section('banners')@stop
 @section('style')
     @parent
 <style>
@@ -43,6 +44,7 @@
 </style>
 @stop
 @section('script')
+    @parent
     <script>
         $('#banner').remove();
         $('.parallax_holder').remove();

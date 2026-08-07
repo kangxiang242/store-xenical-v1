@@ -2,209 +2,103 @@
 
 @section('style')
     @parent
-    <style>
-        .order {
-            width: 920px;
-            margin: 20px auto;
-            margin-top: 50px;
-        }
-
-        .tips {
-            width: 100%;
-            font-size: 14px;
-            margin: 20px 0;
-            line-height: 20px;
-        }
-
-        .ordertable .item {
-            display: flex;
-            border: 1px solid #2CB156;
-            overflow: hidden;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-
-        .ordertable .item label {
-            width: 100px;
-            text-align: center;
-            padding: 18px 0;
-            font-size: 16px;
-            line-height: 24px;
-            background: #2CB156;
-            display: flex;
-            color: #fff;
-        }
-        .ordertable .item label span{
-            align-self: center;
-            width: 100%;
-        }
-
-        .ordertable .item .conta {
-            flex: 1;
-            text-align: center;
-            padding: 18px 0;
-            font-size: 16px;
-            line-height: 24px;
-            color: #000;
-        }
-
-        .ordertable .item .conta .shopitem {
-
-            border-bottom: 1px solid #eaeaea;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-        }
-
-        .ordertable .item .conta .shopitem:last-child{
-            border: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .ordertable .item .conta .shopitem .shopImg {
-            display: inline-block;
-            vertical-align: top;
-            width: 80px;
-            height: 80px;
-            overflow: hidden;
-            border: 1px solid #eaeaea;
-        }
-
-        .ordertable .item .conta .shopitem .shopImg img {
-            width: 100%;
-        }
-
-        .ordertable .item .conta .shopitem .shopMsg {
-            display: inline-block;
-            vertical-align: top;
-
-            height: 80px;
-            margin-left: 20px;
-            line-height: 80px;
-        }
-
-        .ordertable .item .conta .shopitem .shopMsg .name {
-            width: 320px;
-
-        }
-        .ordertable .item .conta .shopitem .shopMsg .name em{
-            font-style: normal;
-            color:#f74545;
-        }
-
-        .ordertable .item .conta .shopitem .shopMsg span {
-            display: inline-block;
-            vertical-align: middle;
-            width: 138px;
-            line-height: 1;
-        }
-
-    </style>
-@stop
-
-@section('script')
-    @parent
-    <script src="{{ asset('static/js/sweetalert2.js') }}?ver={{ config('app.asset_version') }}"></script>
-    <script>
-        if(flash_data){
-            Swal.fire({
-                title: flash_data.title,
-                text: flash_data.message,
-                icon: 'success',
-                confirmButtonText: '好的'
-            })
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!window.XenicalTracker) return;
-            XenicalTracker.conversion('view_order', { order_no: @json($order->no ?? ''), status: 'success' }, 'order_success');
-        });
-    </script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('static/less/checkout.css') }}"/>
 @stop
 
 
+@section('banners')@stop
+@section('header')@stop
+@section('footer')@stop
 
 @section('content')
-    <div class="container" style="padding-bottom: 100px">
-        <div class="wrapper ">
-            <div class="order">
-
-                <div class="ordertable">
-                    <div class="item">
-                        <label><span>訂單號</span></label>
-                        <div class="conta">{{ $order->no }}</div>
-                        <label><span>下單時間</span></label>
-                        <div class="conta">{{ $order->created_at }}</div>
-                        <label><span>訂單狀態</span></label>
-                        <div class="conta color2"><span>{{ \Illuminate\Support\Arr::get(\App\Models\Order::STATUS_TXT,$order->status) }}</span></div>
-                    </div>
-                    <div class="item">
-                        <label><span>訂單人</span></label>
-                        <div class="conta">{{ $order->name }}</div>
-                        <label><span>聯絡電話</span></label>
-                        <div class="conta">{{ $order->phone }}</div>
-                        <label><span>電子信箱</span></label>
-                        <div class="conta">{{ $order->email }}</div>
-                    </div>
+    <div class="header">
+        <div class="c-logo">
+            <a href="{{ url('/') }}" class="lds-logo-lilly logo-red">
+                <img src="{{ app('cache.config')->get('checkout_logo')?asset_upload(app('cache.config')->get('checkout_logo')):asset_upload(app('cache.config')->get('logo')) }}" alt="logo">
+            </a>
+        </div>
+    </div>
 
 
-                    <div class="item">
-                        <label><span>購物商品</span></label>
-                        <div class="conta">
-                            @foreach($order->products as $item)
-                                <div class="shopitem">
-                                    <div class="shopImg">
-                                        <img src="{{ asset('uploads/'.$item->product_img) }}" alt="{{ $item->product_name }}" loading="lazy" decoding="async">
-                                    </div>
-                                    <div class="shopMsg">
-                                        <span class="name">{!! $item->is_added?"<em>[加購]</em>":"" !!}{{ $item->product_name }}</span>
-                                        <span>× {{ $item->number }}</span>
-                                        <span>NT${{ $item->total_price }}</span>
-                                    </div>
-                                </div>
 
-                            @endforeach
-                        </div>
-                    </div>
+    <div class="container">
+        <div class="intro">
+            <h1 class="title">訂單詳情</h1>
+            <p class="sub">ORDER</p>
+        </div>
+        <div class="main">
 
-                    <div class="item">
-                        <label><span>配送方式</span></label>
-                        <div class="conta">
-                            {{ $order->delivery_type?"超商(7-11) 取貨付款":"宅配 貨到付款" }}
-                        </div>
-                        <label><span>訂單總價</span></label>
-                        <div class="conta">
-                            NT${{ round($order->total_price) }}（{{ $order->freight>0?"含運費$".round($order->freight):"免運費" }}）
-                        </div>
-                    </div>
-                    @if($order->delivery_type > 0)
-                        <div class="item">
-                            <label><span>門市號</span></label>
-                            <div class="conta">
-                                {{ $order->shop_no }}
-                            </div>
-                            <label><span>門市名稱</span></label>
-                            <div class="conta">
-                                {{ $order->shop_name }}
-                            </div>
-                        </div>
-                    @endif
-                    <div class="item">
-                        <label><span>地址</span></label>
-                        @if($order->delivery_type > 0 && $order->address)
-                            <div class="conta">{{ $order->address }}</div>
-                        @else
-                            <div class="conta">{{ $order->city.$order->county.$order->street.$order->address }}</div>
+            <div class="wrap">
+
+                <div class="details-body">
+                    <div class="order">
+                        <dl>
+                            <dt>訂單編號</dt>
+                            <dd>{{ $order->no }}</dd>
+                        </dl>
+                        <dl>
+                            <dt>訂單狀態</dt>
+                            <dd>{{ \Illuminate\Support\Arr::get(\App\Models\Order::STATUS_TXT,$order->status) }}</dd>
+                        </dl>
+                        <dl>
+                            <dt>訂購商品</dt>
+                            <dd>
+                                {{ $order->products->first()->product_name }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>支付總額</dt>
+                            <dd>NT${{ round($order->total_price) }}<span class="freight">（{{ $order->freight>0?"含運費NT$".round($order->freight):"免運費" }}）</span></dd>
+                        </dl>
+                        <dl>
+                            <dt>收貨姓名</dt>
+                            <dd>{{ $order->name }}</dd>
+                        </dl>
+                        <dl>
+                            <dt>聯絡電話</dt>
+                            <dd>{{ $order->phone }}</dd>
+                        </dl>
+                        <dl>
+                            <dt>收貨方式</dt>
+                            <dd>
+                                @if($order->delivery_type == 1)
+                                    超商(7-11) 取貨付款
+                                @elseif($order->delivery_type == 2)
+                                    @if($order->shop_type == 2)
+                                        超商(全家) 取貨付款
+                                    @elseif($order->shop_type == 3)
+                                        超商(OK) 取貨付款
+                                    @else
+                                        超商(萊爾富) 取貨付款
+                                    @endif
+                                @else
+                                    快遞宅配 貨到付款
+                                @endif
+                            </dd>
+                        </dl>
+                        @if($order->delivery_type>0)
+                            <dl>
+                                <dt>門市號</dt>
+                                <dd>{{ $order->shop_no }}</dd>
+                            </dl>
+                            <dl>
+                                <dt>門市名稱</dt>
+                                <dd>{{ $order->shop_name }}</dd>
+                            </dl>
                         @endif
-                    </div>
-
-
-                    <div class="item">
-                        <label><span>訂單備註</span></label>
-                        <div class="conta">{{ $order->remarks?:"無" }}</div>
+                        <dl>
+                            <dt>{{ $order->delivery_type>0?'門市':'收貨' }}地址</dt>
+                            <dd>{{ $order->city.$order->county.$order->street.$order->address }}</dd>
+                        </dl>
+                        <dl>
+                            <dt>訂單備注</dt>
+                            <dd>{{ $order->remarks?:"無" }}</dd>
+                        </dl>
                     </div>
                 </div>
 
             </div>
+
         </div>
     </div>
 @endsection

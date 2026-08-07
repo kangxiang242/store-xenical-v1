@@ -1,77 +1,43 @@
 <!DOCTYPE html>
-@php
-    $needsWow = request()->is('/') || request()->is('product');
-@endphp
-<html lang="zh-TW" style="font-size: 62.5%">
+<html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="content-language" content="zh-tw">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="format-detection" content="telephone=no">
-    @if(app('cache.config')->get('google_verify_type') == 1)
-        {!! app('cache.config')->get('google_verify_code') !!}
-    @endif
+    <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     @if(isset($layout['seo']))
         <title>{{ isset($layout['seo'])?$layout['seo']->title:"" }}</title>
     @else
         @hasSection('title')
             <title>@yield('title')</title>
         @else
-            <title>{{ isset($layout['seo'])?$layout['seo']->title:"" }}</title>
+            <title>@yield('title-before')-犀利士(Cialis) 「原廠進口」壯陽藥品 | CialisLilly.com台灣藥局</title>
         @endif
     @endif
 
     @hasSection('keywords')
         <meta name="keywords" content="@yield('keywords')"/>
     @else
-        <meta name="keywords" content="{{ isset($layout['seo'])?$layout['seo']->key_word:"" }}"/>
+        <meta name="keywords" content="{{ isset($layout['seo'])?$layout['seo']->key_word:"犀利士,Cialis,台灣,壯陽藥品,美國" }}"/>
     @endif
 
     @hasSection('description')
         <meta name="description" content="@yield('description')"/>
     @else
-        <meta name="description" content="{{ isset($layout['seo'])?$layout['seo']->description:"" }}"/>
+        <meta name="description" content="{{ isset($layout['seo'])?$layout['seo']->description:"CialisLilly.CoM台灣線上藥局銷售「美國原裝進口」壯陽藥品犀利士(Cialis)。犀利士能顯著延長性生活有效解決陽痿問題,让你您重振雄风，歡迎購買犀利士,貨到付款,隱秘包裝！" }}"/>
     @endif
-
-    <link rel="alternate" hreflang="zh-TW" href="{{ config('app.url') }}/{{ trim(request()->path(),'/') }}" />
     <link rel="canonical" href="{{ config('app.url') }}/{{ trim(request()->path(),'/') }}">
-
-    <link rel="shortcut icon" href="{{ asset_upload(app('cache.config')->get('favicon'),'/favicon.ico') }}">
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="{{ env('APP_M_URL') }}/{{ trim(request()->path(),'/') }}">
+    <link rel="shortcut icon" href="{{ \App\Services\ConfigService::get('favicon')?asset('uploads/'.\App\Services\ConfigService::get('favicon')):'/favicon.ico' }}">
     @section('style')
         <link rel="stylesheet" type="text/css" href="{{ asset('static/css/style.css') }}?ver={{ config('app.asset_version') }}"/>
-        @if(!is_googlebot())
-        <link rel="stylesheet" href="{{ asset('static/font/iconfont.css') }}?ver={{ config('app.asset_version') }}">
-        @endif
-        <link rel="stylesheet" href="{{ asset('static/mobile/less/global.css') }}?ver={{ config('app.asset_version') }}">
-        @if($needsWow)
-        <link rel="stylesheet" type="text/css" href="{{ asset('static/wow/animate.min.css') }}?ver={{ config('app.asset_version') }}"/>
-        @endif
+        <link rel="stylesheet" type="text/css" href="{{ asset('static/mobile/less/global.css') }}?ver={{ config('app.asset_version') }}"/>
+        <link rel="stylesheet" href="{{ asset('static/font_3122894_ix34x1wtlao/iconfont.css') }}?ver={{ config('app.asset_version') }}">
+
     @show
 
-    @php
-        $trackingWebHost = parse_url(config('app.url'), PHP_URL_HOST);
-        $trackingMobileHost = parse_url(config('app.m_url') ?: config('app.url'), PHP_URL_HOST);
-    @endphp
     <script src="{{ asset('static/js/jquery.min.js') }}?ver={{ config('app.asset_version') }}"></script>
-    <script>
-        window.__TRACKING_CONFIG__ = {
-            webHost: @json($trackingWebHost),
-            mobileHost: @json($trackingMobileHost),
-            endpoint: '/observer/store',
-            enabled: @json(!app()->environment('local')),
-            debug: @json(app()->environment('local')),
-            assetVersion: @json(config('app.asset_version')),
-            pluginBase: @json(asset('static/js/tracker-plugins') . '/')
-        };
-    </script>
-    @include('components.tracking-page')
-    <script src="{{ asset('static/js/tracker.js') }}?ver={{ config('app.asset_version') }}" defer></script>
-    <script src="{{ asset('static/js/observer.js') }}?ver={{ config('app.asset_version') }}" defer></script>
-    @if($needsWow)
-    <script src="{{ asset('static/wow/wow.min.js') }}?ver={{ config('app.asset_version') }}"></script>
-    @endif
+
     <script>
         var clientWidth = document.documentElement.clientWidth;
         ;(function (doc, win, undefined) {
@@ -95,22 +61,12 @@
         document.documentElement.style.fontSize = clientWidth / 37.5 + 'px';
     </script>
     <script>
-        document.addEventListener('dblclick', function (e) {
-            e.preventDefault();
-        }, { passive: false });
-    </script>
-    @if($needsWow)
-    <script>
-        new WOW({
-            offset:50,
-        }).init();
-    </script>
-    @endif
-    <script>
         var is_ajax_get_cart = 0;
         var flash_data = '{!! session()->get('flash') !!}';
+
         if(flash_data){
             flash_data = JSON.parse('{!! session()->get('flash') !!}');
+
         }else{
             flash_data = false;
         }
@@ -120,255 +76,190 @@
         var free_shipping_where = parseInt("{{ \App\Services\ConfigService::get('freight_where',0) }}");
         var free_shipping_freight = parseInt("{{ \App\Services\ConfigService::get('freight',0) }}");
 
+        var is_mobile_domain = parseInt("{{ is_mobile_domain()?"1":"0" }}");
     </script>
+    @if(!config('app.debug'))
+    <script>
 
-
+        var host = window.location.host;
+        var current_host = "{{ config('app.m_url') }}"
+        var host_bool = current_host.search(host) != -1;
+        if(!host_bool){
+            window.location.href = current_host;
+        }
+    </script>
+    @endif
 </head>
 <body>
 
 @section('header')
-    <header>
-        <div class="logo-wrap">
-            <a href="{{ url('/') }}">
-                <img class="logo-img" src="{{ asset('static/img/m.logo2.webp') }}?ver={{ config('app.asset_version') }}" alt="logo" decoding="async">
+<header>
+    <div class="wrapper">
+        <div class="logo-sec">
+            <a href="{{ url('/') }}" class="lds-logo-lilly logo-red">
+                <svg viewBox="0 0 631 344" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Lilly</title> <path id="Lilly" d="M435.528098,200.793973 C439.182374,198.191364 443.134091,195.153215 446.820236,192.231919 C475.215236,169.509545 496.917811,144.609478 501.198838,130.831582 C501.358182,130.385421 501.740606,129.121296 501.740606,128.101498 C501.740606,126.67803 501.060741,125.679478 499.754125,125.679478 C486.741077,125.679478 444.886869,167.331852 434.763249,201.048923 L434.763249,201.18702 L435.528098,200.793973 Z M330.648249,196.003047 C370.19729,166.131465 411.732811,122.630707 416.162559,104.77362 C416.311279,104.18936 416.449377,103.615724 416.428131,103.073956 C416.375017,101.905438 415.737643,100.853771 414.250438,100.853771 C401.736667,100.853771 343.767525,154.297559 330.648249,196.003047 Z M87.830101,222.262845 C77.3877946,215.01803 61.2409933,208.686785 46.8257239,208.686785 C32.8353704,208.686785 23.8802694,214.178822 23.8802694,221.104949 C23.8802694,229.082744 34.7474916,232.567054 46.9000842,232.567054 C61.6446633,232.567054 75.0188889,228.583468 87.830101,222.262845 Z M208.984226,128.54766 C237.326111,119.454461 264.223283,100.450101 284.27931,80.606532 C302.826886,62.2395455 317.667071,40.4307407 317.667071,29.6378788 C317.667071,27.173367 315.90367,25.6861616 313.672862,25.6861616 C305.089562,25.6861616 288.79404,37.0951515 266.88963,59.0208081 C249.818636,76.1449158 229.943199,99.4834175 208.984226,128.54766 Z M631,197.086582 C606.662946,221.317407 530.783603,287.91234 510.695707,343.958737 L485.827508,337.553131 C493.954024,314.342104 518.429175,278.245505 545.719394,250.38165 C539.919293,252.580589 533.85362,253.387929 528.998956,253.387929 C521.626667,253.387929 515.890303,251.167744 512.448485,246.982323 C509.962727,243.976044 508.709226,240.045572 508.709226,235.382121 C508.709226,234.372946 508.783586,233.342525 508.921684,232.205875 C484.967054,246.791111 465.686498,253.387929 446.820236,253.387929 C432.139394,253.387929 419.763721,246.982323 414.069848,235.764545 C390.274562,247.55596 367.477828,253.387929 348.399108,253.387929 C330.648249,253.387929 316.349832,246.366195 309.784882,233.54436 C285.734646,247.067306 265.285572,253.387929 249.011296,253.387929 C239.641902,253.387929 232.216498,250.78532 227.436195,245.877542 C223.93064,242.265758 222.071633,237.379226 221.816684,231.749091 C206.392239,241.893956 183.892946,253.387929 160.777525,253.387929 C137.173451,253.387929 121.324091,245.272037 109.033401,237.251751 C89.4235354,248.097727 67.8590572,253.387929 45.0517003,253.387929 C27.8107407,253.387929 0,246.196229 0,221.487374 C0,201.526953 20.8208754,188.025253 48.6634848,188.025253 C72.3525421,188.025253 95.1705219,198.010774 109.490185,208.357475 C123.087492,197.543367 137.35404,182.395118 154.170084,161.011229 C150.473316,161.202441 146.861532,161.30867 143.313485,161.30867 C111.08362,161.30867 84.1758249,151.822424 69.4949832,135.18697 C61.570303,126.210623 57.8204209,115.67271 57.8204209,104.338081 C57.8204209,59.5200842 114.408586,24.7513468 163.921902,19.641734 C167.204377,27.0565152 170.136296,32.771633 173.142576,39.5702862 C124.224141,45.2535354 83.4853367,74.2115488 83.4853367,102.50032 C83.4853367,121.090387 104.401818,139.765438 148.76303,139.765438 C156.358401,139.765438 163.996263,139.043081 171.517273,137.991414 C210.673266,83.9421212 270.703249,0 322.330522,0 C337.616869,0 345.594663,9.28441077 345.594663,21.7238215 C345.594663,47.2825084 323.626515,74.7958081 309.306852,89.1473401 C286.796936,111.763485 246.111246,145.395572 189.257508,156.53899 C167.14064,187.292273 148.964865,207.698855 130.789091,222.432811 C141.815657,228.381633 152.130488,232.014663 164.46367,232.014663 C195.046987,232.014663 224.727357,204.002088 247.917138,180.270539 L248.735101,179.484444 L266.815269,193.612896 L265.976061,194.590202 C255.724966,206.349747 246.281212,218.767912 246.281212,225.715286 C246.281212,231.016111 250.732205,232.057155 254.577694,232.057155 C266.30537,232.057155 284.35367,224.48303 305.610084,211.406246 L305.610084,211.225657 C307.957744,158.695438 379.630421,78.3863468 423.141801,78.3863468 C435.421869,78.3863468 442.486094,84.4945118 442.486094,95.2236364 C442.486094,121.547172 397.05197,178.007862 330.988182,221.200556 L330.988182,221.232424 C334.408754,228.583468 342.28032,232.131515 355.6333,232.131515 C366.064983,232.131515 386.429074,227.478687 410.670522,214.816195 C413.485589,187.600337 428.899411,158.387374 448.445539,137.566498 C468.066027,116.713754 490.055421,103.148316 509.070404,103.148316 C520.787458,103.148316 527.713586,109.61766 527.713586,119.741279 C527.713586,142.697357 501.060741,181.959579 436.845337,223.070185 C439.68165,228.583468 445.205556,232.057155 453.778232,232.057155 C472.899444,232.057155 506.595269,211.639949 532.855067,186.538047 L551.700084,201.18702 C543.647929,210.949461 535.510791,221.699832 535.776364,227.861111 C535.840101,229.858215 537.189209,231.186077 540.354832,231.186077 C559.699125,231.186077 590.165589,205.659259 613.004815,183.117475 L631,197.086582 Z M280.805623,144.407643 C289.346431,144.407643 296.251313,151.355017 296.251313,159.874579 C296.251313,168.42601 289.346431,175.362761 280.805623,175.362761 C272.243569,175.362761 265.317441,168.42601 265.317441,159.874579 C265.317441,151.355017 272.243569,144.407643 280.805623,144.407643 Z"></path></svg>
             </a>
+            <a class="lds-menu" href="javascript:;"><span class="text">Menu</span><i class="iconfont">&#xe62c;</i></a>
         </div>
-        <div class="right-wrap">
-       {{--     <div class="online"><a href="{{ url('product') }}">線上訂購</a></div>--}}
-            <div class="menu"><a class="show-menu" href="javascript:;" data-track-section="nav" data-track-name="nav.menu.open" data-observer="側欄-打開"><i class="iconfont">&#xe62c;</i></a></div>
-        </div>
-    </header>
-    <div class="online-buy">
-        <a href="{{ url('product') }}" data-track-section="header" data-track-name="header.order_btn" data-observer="頂部-線上訂購"><i class="iconfont">&#xe811;</i>線上訂購</a>
-    </div>
-@show
-
-@section('menu')
-    <section class="menu-section">
-        <div class="menu-head">
-            <a href="javascript:;" class="close-menu" data-track-section="nav" data-track-name="nav.menu.close" data-observer="側欄-關閉"><i class="iconfont">&#xe62f;</i></a>
-        </div>
-        <ul class="menu-list">
-            <li class="menu-item">
-                <ul class="menu-dropdown">
-                    <li>
-                        <a href="{{ url('/') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.home" data-observer="側欄-首頁">首頁 <i class="iconfont">&#xe775;</i></a>
-                    </li>
-
-                </ul>
-            </li>
-            <li class="menu-item">
-                <a href="javascript:;">Sale</a>
-                <ul class="menu-dropdown">
-                    <li>
-                        <a href="{{ url('product') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.product" data-observer="側欄-線上訂購">羅氏鮮網路訂購<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                    <li>
-                        <a href="{{ url('guide') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.guide" data-observer="側欄-購前須知">購前須知<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                    <li>
-                        <a href="{{ url('payment-delivery') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.payment" data-observer="側欄-付款與配送">付款與配送<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                    <li>
-                        <a href="{{ url('after-sales') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.after_sales" data-observer="側欄-售後服務">售後服務<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-item">
-                <a href="javascript:;">About</a>
-                <ul class="menu-dropdown">
-                    <li>
-                        <a href="{{ url('about') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.about" data-observer="側欄-認識羅氏鮮">認識羅氏鮮<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="menu-item">
-                <a href="javascript:;">Q&A</a>
-                <ul class="menu-dropdown">
-                    <li>
-                        <a href="{{ url('faq') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.faq" data-observer="側欄-營養師解答">營養師解答<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="menu-item">
-                <a href="javascript:;">Articles</a>
-                <ul class="menu-dropdown">
-                    <li>
-                        <a href="{{ url('news') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.news" data-observer="側欄-瘦身專欄">瘦身專欄<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="menu-item">
-                <a href="javascript:;">Service</a>
-                <ul class="menu-dropdown">
-                    <li>
-                        <a href="{{ url('check') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.check" data-observer="側欄-訂單追蹤">訂單追蹤<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                    <li>
-                        <a href="{{ url('message') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.message" data-observer="側欄-取得協助">取得協助<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                    <li>
-                        <a href="{{ url('compute') }}" data-track-section="nav.drawer" data-track-name="nav.drawer.compute" data-observer="側欄-瘦身計算機">瘦身計算機<i class="iconfont">&#xe775;</i></a>
-                    </li>
-                </ul>
-            </li>
-
-        </ul>
-    </section>
-@show
-
-<main>
-@section('banner')
-    @if($layout['banners'] && !$layout['banners']->isEmpty())
-        <section class="banner-section">
-            <div class="banner-main">
-                @foreach($layout['banners'] as $key=>$item)
-                    @if($item->m_img)
-                        <a href="{{ $item->href?url($item->href):"javascript:;" }}"><img src="{{ asset_upload($item->m_img) }}" alt="{{ $item->alt }}" decoding="async"></a>
-                    @endif
-                @endforeach
+        <div class="nav-sec">
+            <div class="nav-top">
+                <a href="javascript:;"><span class="text">Close</span><i class="iconfont">&#xeca0;</i></a>
             </div>
-            @yield('embed-banner')
-        </section>
-    @endif
+            <ul class="base">
+                @foreach($layout['nav'] as $nav)
+                    <li class="link-parent">
+                        <a class="base-link" href="{{ $nav->link?url($nav->link):"javascript:;" }}">{{ $nav->name }}@if($nav->sub && count($nav->sub))<i class="iconfont">&#xeca2;</i>@endif</a>
+                        @if($nav->sub && count($nav->sub))
+                            <div class="mega-menu">
+                                <div class="menu-wrap">
+                                    <div class="column">
+                                        <p class="menu-title">{{ $nav->name }}</p>
+                                        <div class="menu-content">
+                                            @foreach($nav->sub as $sub)
+                                            <div class="link-item"><a href="{{ $sub->link?url($sub->link):"javascript:;" }}">{{ $sub->name }}</a></div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </li>
+                @endforeach
+                    <li class="link-parent">
+                        <a class="base-link" href="/payment-delivery">付款與配送<i class="iconfont">&#xeca2;</i></a>
+                    </li>
+                    <li class="link-parent">
+                        <a class="base-link" href="/after-sales">售後服務<i class="iconfont">&#xeca2;</i></a>
+                    </li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="mark"></div>
+</header>
+@show
+
+
+@section('banners')
+    @php
+        $class = '';
+    @endphp
+    <div class="billboard">
+
+        @hasSection('billboard-title')
+            <div class="billboard-content">
+                <div class="wrap">
+                    <div class="p-wrap">
+                        <h1 class="heading-halfbill">
+                            @yield('billboard-title')
+                        </h1>
+                        <p class="paragraph-optional">
+                            @yield('billboard-desc')
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @php
+                $class='hasborad';
+            @endphp
+        @endif
+
+        @if($layout['banners'] && !$layout['banners']->isEmpty())
+            <section class="banner-section {{ $class }}">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        @foreach($layout['banners'] as $item)
+                            @if($item->img)
+                                <div class="swiper-slide">
+                                    <a href="{{ $item->href?url($item->href):"javascript:;" }}">
+                                        <div class="back" style="background-image: url({{ asset('uploads/'.$item->img) }})"></div>
+                                    </a>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+                @yield('embed-banner')
+            </section>
+        @endif
+    </div>
 @show
 
 @section('breadcrumb')
 
 @show
 
+
 @yield('content')
 
 
-
+@section('footer')
 <footer>
-    {{--<div class="head">
-        <a href="{{ url('/') }}">
-            <div class="logo-wrap">
-                <div class="place">
-                    <div class="compose">
-                        <img class="fra-1" src="{{ asset('static/img/lg/fraw-1.png') }}" alt="logo" loading="lazy" decoding="async">
-                        <img class="fra-2" src="{{ asset('static/img/lg/fraw-2.png') }}" alt="logo" loading="lazy" decoding="async">
-                        <img class="fra-3"  src="{{ asset('static/img/lg/fraw-3.png') }}" alt="logo" loading="lazy" decoding="async">
-                    </div>
-                    <div class="intact">
-                        <img class="xenical-logo" src="{{ asset('static/img/lg/xenical-2.png') }}" alt="xenical" loading="lazy" decoding="async">
-
-                    </div>
-
-                </div>
-                <p class="text white">全球領先健康減肥藥</p>
-            </div>
-        </a>
-    </div>--}}
-
-    <div class="main">
-        <div class="menu-column">
-
-            <div class="menu">
-                <p class="title">Sale</p>
-                <ul class="nav">
-                    <li><a href="{{ url('product') }}" data-track-section="footer.sale" data-track-name="footer.sale.order" data-observer="底部-線上訂購">羅氏鮮網路訂購</a></li>
-                    <li><a href="{{ url('guide') }}" data-track-section="footer.sale" data-track-name="footer.sale.guide" data-observer="底部-購前須知">購前須知</a></li>
-                    <li><a href="{{ url('payment-delivery') }}" data-track-section="footer.sale" data-track-name="footer.sale.payment" data-observer="底部-付款與配送">付款與配送</a></li>
-                    <li><a href="{{ url('after-sales') }}" data-track-section="footer.sale" data-track-name="footer.sale.after_sales" data-observer="底部-售後服務">售後服務</a></li>
-                </ul>
-            </div>
-            <div class="menu">
-                <p class="title">About</p>
-                <ul class="nav">
-                    <li><a href="{{ url('about') }}" data-track-section="footer.about" data-track-name="footer.about.link" data-observer="底部-認識羅氏鮮">認識羅氏鮮</a></li>
-                </ul>
-            </div>
-            <div class="menu">
-                <p class="title">Q&A</p>
-                <ul class="nav">
-                    <li><a href="{{ url('faq') }}" data-track-section="footer.qa" data-track-name="footer.qa.faq" data-observer="底部-營養師解答">營養師解答</a></li>
-                </ul>
-            </div>
-            <div class="menu">
-                <p class="title">Articles</p>
-                <ul class="nav">
-                    <li><a href="{{ url('news') }}" data-track-section="footer.articles" data-track-name="footer.articles.news" data-observer="底部-瘦身專欄">瘦身專欄</a></li>
-                </ul>
-            </div>
-            <div class="menu">
-                <p class="title">Service</p>
-                <ul class="nav">
-                    <li><a href="{{ url('check') }}" data-track-section="footer.service" data-track-name="footer.service.check" data-observer="底部-訂單追蹤">訂單追蹤</a></li>
-                    <li><a href="{{ url('message') }}" data-track-section="footer.service" data-track-name="footer.service.message" data-observer="底部-取得協助">取得協助</a></li>
-                    <li><a href="{{ url('compute') }}" data-track-section="footer.service" data-track-name="footer.service.compute" data-observer="底部-瘦身計算機">瘦身計算機</a></li>
-                </ul>
-            </div>
+    <div class="wrapper">
+        {{--<div class="main-links">
+            <div class="links-item"><a href="">多元化</a></div>
+            <div class="links-item"><a href="">聯絡我們</a></div>
+            <div class="links-item"><a href="">供應商</a></div>
+        </div>--}}
+        <div class="mate">
+            <p>{!! str_replace(PHP_EOL,'<br>',app('cache.config')->get('foot_text')) !!}</p>
         </div>
-
-        <div class="contact-column">
-            <div class="topic">
-                <div class="item">
-                    <a href="{{ url('product') }}" data-track-section="footer.contact" data-track-name="footer.contact.order" data-observer="底部-線上訂購">
-                        <div class="col">
-                            <div class="icon"><i class="iconfont">&#xe64f;</i></div>
-                            <div class="text">
-                                <p class="en">Buy Online</p>
-                                <p class="cn"><span>網路訂購</span></p>
-                            </div>
-                            <div class="arrow-right"><i class="iconfont">&#xe613;</i></div>
-                        </div>
-                    </a>
-                </div>
+        <div class="hole">
+            <div class="logo">
+                <a href="{{ url('/') }}" class="lds-logo-lilly logo-red">
+                    <svg viewBox="0 0 631 344" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Lilly</title> <path id="Lilly" d="M435.528098,200.793973 C439.182374,198.191364 443.134091,195.153215 446.820236,192.231919 C475.215236,169.509545 496.917811,144.609478 501.198838,130.831582 C501.358182,130.385421 501.740606,129.121296 501.740606,128.101498 C501.740606,126.67803 501.060741,125.679478 499.754125,125.679478 C486.741077,125.679478 444.886869,167.331852 434.763249,201.048923 L434.763249,201.18702 L435.528098,200.793973 Z M330.648249,196.003047 C370.19729,166.131465 411.732811,122.630707 416.162559,104.77362 C416.311279,104.18936 416.449377,103.615724 416.428131,103.073956 C416.375017,101.905438 415.737643,100.853771 414.250438,100.853771 C401.736667,100.853771 343.767525,154.297559 330.648249,196.003047 Z M87.830101,222.262845 C77.3877946,215.01803 61.2409933,208.686785 46.8257239,208.686785 C32.8353704,208.686785 23.8802694,214.178822 23.8802694,221.104949 C23.8802694,229.082744 34.7474916,232.567054 46.9000842,232.567054 C61.6446633,232.567054 75.0188889,228.583468 87.830101,222.262845 Z M208.984226,128.54766 C237.326111,119.454461 264.223283,100.450101 284.27931,80.606532 C302.826886,62.2395455 317.667071,40.4307407 317.667071,29.6378788 C317.667071,27.173367 315.90367,25.6861616 313.672862,25.6861616 C305.089562,25.6861616 288.79404,37.0951515 266.88963,59.0208081 C249.818636,76.1449158 229.943199,99.4834175 208.984226,128.54766 Z M631,197.086582 C606.662946,221.317407 530.783603,287.91234 510.695707,343.958737 L485.827508,337.553131 C493.954024,314.342104 518.429175,278.245505 545.719394,250.38165 C539.919293,252.580589 533.85362,253.387929 528.998956,253.387929 C521.626667,253.387929 515.890303,251.167744 512.448485,246.982323 C509.962727,243.976044 508.709226,240.045572 508.709226,235.382121 C508.709226,234.372946 508.783586,233.342525 508.921684,232.205875 C484.967054,246.791111 465.686498,253.387929 446.820236,253.387929 C432.139394,253.387929 419.763721,246.982323 414.069848,235.764545 C390.274562,247.55596 367.477828,253.387929 348.399108,253.387929 C330.648249,253.387929 316.349832,246.366195 309.784882,233.54436 C285.734646,247.067306 265.285572,253.387929 249.011296,253.387929 C239.641902,253.387929 232.216498,250.78532 227.436195,245.877542 C223.93064,242.265758 222.071633,237.379226 221.816684,231.749091 C206.392239,241.893956 183.892946,253.387929 160.777525,253.387929 C137.173451,253.387929 121.324091,245.272037 109.033401,237.251751 C89.4235354,248.097727 67.8590572,253.387929 45.0517003,253.387929 C27.8107407,253.387929 0,246.196229 0,221.487374 C0,201.526953 20.8208754,188.025253 48.6634848,188.025253 C72.3525421,188.025253 95.1705219,198.010774 109.490185,208.357475 C123.087492,197.543367 137.35404,182.395118 154.170084,161.011229 C150.473316,161.202441 146.861532,161.30867 143.313485,161.30867 C111.08362,161.30867 84.1758249,151.822424 69.4949832,135.18697 C61.570303,126.210623 57.8204209,115.67271 57.8204209,104.338081 C57.8204209,59.5200842 114.408586,24.7513468 163.921902,19.641734 C167.204377,27.0565152 170.136296,32.771633 173.142576,39.5702862 C124.224141,45.2535354 83.4853367,74.2115488 83.4853367,102.50032 C83.4853367,121.090387 104.401818,139.765438 148.76303,139.765438 C156.358401,139.765438 163.996263,139.043081 171.517273,137.991414 C210.673266,83.9421212 270.703249,0 322.330522,0 C337.616869,0 345.594663,9.28441077 345.594663,21.7238215 C345.594663,47.2825084 323.626515,74.7958081 309.306852,89.1473401 C286.796936,111.763485 246.111246,145.395572 189.257508,156.53899 C167.14064,187.292273 148.964865,207.698855 130.789091,222.432811 C141.815657,228.381633 152.130488,232.014663 164.46367,232.014663 C195.046987,232.014663 224.727357,204.002088 247.917138,180.270539 L248.735101,179.484444 L266.815269,193.612896 L265.976061,194.590202 C255.724966,206.349747 246.281212,218.767912 246.281212,225.715286 C246.281212,231.016111 250.732205,232.057155 254.577694,232.057155 C266.30537,232.057155 284.35367,224.48303 305.610084,211.406246 L305.610084,211.225657 C307.957744,158.695438 379.630421,78.3863468 423.141801,78.3863468 C435.421869,78.3863468 442.486094,84.4945118 442.486094,95.2236364 C442.486094,121.547172 397.05197,178.007862 330.988182,221.200556 L330.988182,221.232424 C334.408754,228.583468 342.28032,232.131515 355.6333,232.131515 C366.064983,232.131515 386.429074,227.478687 410.670522,214.816195 C413.485589,187.600337 428.899411,158.387374 448.445539,137.566498 C468.066027,116.713754 490.055421,103.148316 509.070404,103.148316 C520.787458,103.148316 527.713586,109.61766 527.713586,119.741279 C527.713586,142.697357 501.060741,181.959579 436.845337,223.070185 C439.68165,228.583468 445.205556,232.057155 453.778232,232.057155 C472.899444,232.057155 506.595269,211.639949 532.855067,186.538047 L551.700084,201.18702 C543.647929,210.949461 535.510791,221.699832 535.776364,227.861111 C535.840101,229.858215 537.189209,231.186077 540.354832,231.186077 C559.699125,231.186077 590.165589,205.659259 613.004815,183.117475 L631,197.086582 Z M280.805623,144.407643 C289.346431,144.407643 296.251313,151.355017 296.251313,159.874579 C296.251313,168.42601 289.346431,175.362761 280.805623,175.362761 C272.243569,175.362761 265.317441,168.42601 265.317441,159.874579 C265.317441,151.355017 272.243569,144.407643 280.805623,144.407643 Z"></path></svg>
+                </a>
             </div>
-            <div class="address">
-                {!! str_replace(PHP_EOL,'<br/>',app('cache.config')->get('foot_text')) !!}
+            <div class="provision">
+                <div class="item"><a href="">使用條款</a></div>
+                <div class="item"><a href="">隱私權聲明</a></div>
+                <div class="item"><a href="">造訪便利性聲明</a></div>
+                <div class="item"><a href="">網站地圖</a></div>
             </div>
-        </div>
-
-        <div class="description">
-            <div class="partner">
-                <div class="icon"><img  style="width: 12.6rem" src="{{ asset('static/img/fdausa.webp') }}" alt="fda-usa" loading="lazy" decoding="async"></div>
-                <div class="icon"><img style="width: 15.2rem" src="{{ asset('static/img/ema.webp') }}" alt="ema" loading="lazy" decoding="async"></div>
-                <!-- <div class="icon"><img  style="width: 14.5rem" src="{{ asset('static/img/fdataiwan.png') }}" alt="台湾fda" loading="lazy" decoding="async"></div> -->
-                <div class="icon"><img  style="width: 5rem" src="{{ asset('static/img/ROCHE.webp') }}" alt="ROCHE" loading="lazy" decoding="async"></div>
-                <div class="icon"><img  style="width: 12rem" src="{{ asset('static/img/CHEPLA.webp') }}" alt="CHEPLA" loading="lazy" decoding="async"></div>
-                <!-- <div class="icon"><img  style="width: 12.2rem" src="{{ asset('static/img/heimao.png') }}" alt="黑猫宅急便" loading="lazy" decoding="async"></div>
-                <div class="icon"><img  style="width: 2.6rem" src="{{ asset('static/img/7-11.png') }}" alt="7-11" loading="lazy" decoding="async"></div> -->
-                <div class="icon"><img style="width: 5.2rem" src="{{ asset('static/img/ssl.webp') }}" alt="ssl" loading="lazy" decoding="async"></div>
-            </div>
-            <p class="copyright">{!! app('cache.config')->get('copyright') !!}</p>
-        </div>
     </div>
 </footer>
+@show
 
-
-</main>
 </body>
 
-
 @section('script')
-    {!! app('cache.config')->get('google_ga') !!}
-    <script>
-        $('.show-menu').click(function () {
-            $('.menu-section').addClass('-show');
-            $('body').append('<div class="shade"></div>');
-            $('body').addClass('overflow-hidden')
-        });
-        $('.close-menu').click(function(){
-            $('.menu-section').removeClass('-show');
-            $('.shade').remove();
-            $('body').removeClass('overflow-hidden')
-        });
+<script src="{{ asset('static/js/less.min.js') }}?ver={{ config('app.asset_version') }}"></script>
+<script src="{{ asset('static/swiper4/swiper.min.js') }}?ver={{ config('app.asset_version') }}"></script>
+<script src="{{ asset('static/js/jquery.cookie.js') }}?ver={{ config('app.asset_version') }}"></script>
+<script src="{{ asset('static/js/xie.js') }}?ver={{ config('app.asset_version') }}"></script>
 
-        $('body').on('click','.shade',function(){
-            if (window.XenicalTracker) {
-                XenicalTracker.track('click', 'nav.menu.close_shade', { section: 'nav', label: '側欄-遮罩關閉', explain: '側欄-遮罩關閉' });
-            }
-            $('.menu-section').removeClass('-show');
-            $('.shade').remove();
-            $('body').removeClass('overflow-hidden')
-        });
-    </script>
+{!! \App\Services\ConfigService::get('google_ga') !!}
 
+<script>
+
+    $('.menu-wrap').each(function () {
+        var height = $(this).innerHeight();
+        $(this).parent().css('--height',height+'px')
+    })
+    $('.base-link').click(function () {
+        if($(this).parent().hasClass('activate')){
+            $(this).parent().removeClass('activate').siblings().removeClass('activate');
+
+        }else{
+            $(this).parent().addClass('activate').siblings().removeClass('activate');
+
+        }
+    });
+
+    $('.lds-menu').click(function(){
+        if($('body').hasClass('show-menu')){
+            $('body').removeClass('show-menu');
+        }else{
+            $('body').addClass('show-menu');
+        }
+    });
+
+    $('header .mark,.nav-top').click(function(e){
+        $('body').removeClass('show-menu');
+    });
+
+
+</script>
 @show
+
 </html>

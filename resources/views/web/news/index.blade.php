@@ -4,91 +4,113 @@
     @parent
     <link rel="stylesheet" type="text/css" href="{{ asset('static/less/news.css') }}?ver={{ config('app.asset_version') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('static/less/pagination.css') }}?ver={{ config('app.asset_version') }}"/>
+    <style>
+        @media screen and (min-width: 1024px) {
+            .guide-scroll{
+                display: none;
+            }
+        }
+    </style>
 @stop
 
 @section('script')
     @parent
-    <script src="{{ asset('static/js/jquery.waypoints.min.js') }}?ver={{ config('app.asset_version') }}"></script>
     <script>
-        $(function(){
-            $('.cardList > li').waypoint(function(){
-                this.element.classList.add('show');
-            },{
-                offset: '70%'
-            });
-        });
-        $(window).scroll(function() {
-            bgEffect()
 
-        });
+        $(document).ready(function(){
+            const $ScrollWrap = $(window)
+            // 监听滚动停止
+            let t1 = 0;
+            let t2 = 0;
+            let timer = null; // 定时器
+            $ScrollWrap.on("touchstart", function(){
 
-        function bgEffect(){
-            let top = document.scrollingElement.scrollTop; //触发滚动条，记录数值
-            let banner_height = $('.container-bg').height()-60;
-            let opacity = 1-top/banner_height;
-            $('.container-bg').css('opacity',opacity);
-            if(opacity<=0.6){
-                $('.page-title').css('color','rgba(0,0,0,'+top/banner_height+')');
-            }else{
-                $('.page-title').css('color','#fff');
+                // 触摸开始 ≈ 滚动开始
+            })
+            $ScrollWrap.on("scroll", function(){
+                $('.elevator').addClass('slipOut')
+
+                // 滚动
+                clearTimeout(timer)
+                timer = setTimeout(isScrollEnd, 300)
+                t1 = $ScrollWrap.scrollTop()
+                if(t1<=0){
+
+                }else{
+
+                }
+            })
+            function isScrollEnd() {
+                t2 = $ScrollWrap.scrollTop();
+                if(t2 == t1){
+                    $('.elevator').removeClass('slipOut')
+
+                    clearTimeout(timer)
+                }
+
             }
 
-            if(($(window).scrollTop() + $(window).height()).toFixed(0) == $(document).height()){
-                $('.container-bg').css('opacity',0);
-            }
 
-
-        }
+        })
     </script>
 @stop
 
 
+@section('title-before',$cate?$cate->name:"相關資訊")
+@section('topic-title',$cate?$cate->name:"相關資訊")
+@section('topic-sub',$cate?$cate->sub_name:"NEWS")
+
+@section('banner-section-append')
+    <div class="elevator">
+        <a href="{{ url('product') }}">
+            <p class="p1">購買{{ app('cache.config')->get('site_name') }}</p>
+            <p class="ico"><i class="iconfont">&#xeb21;</i></p>
+        </a>
+    </div>
+@stop
+
+@section('breadcrumb')
+    <ul class="breadcrumb">
+        <li><a href="{{ url('/') }}">首页</a></li>
+        <li class="active">{{ $cate->name }}</li>
+    </ul>
+@stop
+
 @section('content')
-    @php($newsBg = app('cache.config')->get('page_news_back_img_pc'))
-    @if($newsBg)
-    <div class="container-bg" style="background-image: url('{{ asset_upload($newsBg) }}')">
-    @else
-    <div class="container-bg">
-    @endif
-        <p class="bg-text">{!! app('cache.config')->get('page_news_title') !!}</p>
-        <p class="beat"><i class="iconfont">&#xe784;</i></p>
-    </div>
-    <h1 class="page-title">瘦身專欄</h1>
-    <div class="news-wrap" data-track-section="news.list" data-track-section-view data-track-section-label="文章列表">
-        <ul class="breadcrumb">
-            <li><a href="{{ url('/') }}">首頁</a></li>
-            <li class="active">瘦身專欄</li>
-        </ul>
-        <ul class="cardList vertical">
+    <div class="container no-curtain">
 
-            @foreach($news as $item)
-                <li class="">
-                    <div class="item ">
-                        @if($item->img)
-                        <div class="Img"><a href="{{ url('news/'.$item->id) }}" data-track-section="news.list" data-track-name="news.list.item" data-observer="文章-{{ $item->title }}"><img src="{{ asset('uploads/'.$item->img) }}" alt="{{ $item->title }}" loading="lazy" decoding="async"></a></div>
-                        @endif
-                        <div class="Txt">
-                            <div class="newsInfoIdxBox">
-                                <div class="newsDateBox">
-                                    <span class="day">{{ $item->release_at->format('d') }}</span>
-                                    <span class="ym">{{ substr($item->release_at->format('Y'),-2) }} {{ $item->release_at->format('M') }}</span>
+        <div class="main">
+            <div class="news-body">
+
+                <ul class="news">
+                    @foreach($news as $item)
+                        <li class="item">
+
+                            <a class="ls" href="{{ url($item->cate->uri.'/'.$item->id) }}">
+                                <div class="yiv">
+                                    @if($item->img)
+                                    <div class="img-wrapper"><img src="{{ asset('uploads/'.$item->img) }}" alt="{{ $item->img_alt?:$item->title }}"></div>
+                                    @endif
+                                    <div class="info">
+                                        {{--<p class="date">{{$item->release_at->format('Y-m-d') }}</p>--}}
+                                        <p class="new-title">{{ $item->title }}</p>
+                                    </div>
+                                    <div class="go"><span>more</span></div>
                                 </div>
-                                <div class="newsTitle">
-                                    <h3><a href="{{ url('news/'.$item->id) }}" data-track-section="news.list" data-track-name="news.list.title" data-observer="文章標題-{{ $item->title }}">{{ $item->title }}</a></h3>
-                                </div>
-                            </div>
-                            <p class="ellipsis" style="overflow-wrap: break-word;">
-                                {{ \Illuminate\Support\Str::limit($item->brief?$item->brief:strip_tags($item->content),680) }}
-                            </p>
-                        </div>
-                    </div>
-                </li>
-            @endforeach
 
+                            </a>
 
-        </ul>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="pagination">
+                    {!! $news->links() !!}
+                </div>
 
-        {{ $news->links() }}
+            </div>
+        </div>
     </div>
+
+
 
 @endsection

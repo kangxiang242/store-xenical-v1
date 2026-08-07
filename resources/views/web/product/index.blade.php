@@ -3,88 +3,133 @@
 @section('style')
     @parent
     <link rel="stylesheet" type="text/css" href="{{ asset('static/less/product.css') }}?ver={{ config('app.asset_version') }}"/>
+    <style>
+        .g-icons{
+            justify-content: space-around;
+        }
+        .g-icons li{
+            margin-right: 20px;
+        }
+        .g-icons li .p2 {
+            font-size: 14px;
+        }
+        @media screen and (max-width: 1024px){
+            .g-icons li{
+                margin-right: 0;
+            }
 
-
+        }
+    </style>
 @stop
 
-@section('script')
-    @parent
-    <script src="{{ asset('static/a/js/jquery.parallax-scroll.js') }}?ver={{ config('app.asset_version') }}"></script>
-
-@stop
+@php
+    $privacy_text = str_replace(PHP_EOL,"<br>",app('cache.config')->get('privacy_text'));
+@endphp
+@section('title-before',app('cache.config')->get('site_name').'訂購')
+@section('topic-title','減肥藥購買')
+@section('topic-sub','SHOPPING ONLINE')
 @section('breadcrumb')
     <ul class="breadcrumb">
-        <li><a href="{{ url('/') }}">首頁</a></li>
-        <li class="active">線上訂購</li>
+        <li><a href="{{ url('/') }}">首页</a></li>
+        <li class="active">減肥藥購買</li>
     </ul>
-@stop
-@section('embed-banner')
-    <div class="embed-banner wrapper">
-        <h1 class="embed-title">{!! app('cache.config')->get('page_product_title') !!}</h1>
-        <div class="embed-desc">{!! str_replace(PHP_EOL,'<br>',app('cache.config')->get('page_product_desc')) !!}</div>
-    </div>
 @stop
 @section('content')
 
-<section class="product-container" data-track-section="product_list" data-track-section-view data-track-section-label="商品列表">
-    <div class="wrapper">
 
-        <div class="product-main">
+    <div class="container">
+        <div class="intro">
+            <p class="text">
+                {!! str_replace(PHP_EOL,"<br>",app('cache.config')->get('contact_page_text')) !!}
+            </p>
+        </div>
+        <div class="main">
+            <div class="wrap">
 
-            @foreach($products as $key=>$goods)
-
-                <div class="goods wow animate__animated animate__fadeInUp {{ $key%2==0?"even":"odd" }}">
-                    <div class="img-wrap" data-parallax='{"y": {{ $key%2==0?"-":"" }}100,"duration": 100}'>
-                        <img src="{{ asset('uploads/'.$goods->img) }}?ver={{ config('app.asset_version') }}" alt="{{ $goods->name }}" loading="lazy" decoding="async">
-                    </div>
-                    <div class="info" data-parallax='{"y": {{ $key%2==0?"":"-" }}100}'>
-                        <div class="info-boa">
-                            <p class="line"></p>
-                            <div class="title">
-                                <h2>{{ $goods->name }}</h2>
-                                <p>{{ $goods->quantity }}{{ $goods->quantity == 1?"盒標準裝":"盒優惠套裝" }}</p>
+                <div class="product-body">
+                    @php
+                        $product_spec = app('cache.config')->get('product_spec');
+                        $product_component = app('cache.config')->get('product_component');
+                        $product_manufacturer = app('cache.config')->get('product_manufacturer');
+                        $product_valid = app('cache.config')->get('product_valid');
+                    @endphp
+                    @foreach($products as $goods)
+                        <div class="goods">
+                            <div class="img-wrap">
+                                <a href="{{ url('product/'.$goods->id) }}"><img src="{{ asset_upload($goods->img) }}" alt="{{ strip_tags($goods->name) }}"></a>
                             </div>
-                            <div class="tags">
-                                @if($goods->label)
-                                    <p class="tags">
-                                        @foreach(explode('|',$goods->label) as $label)
-                                            <span>{{ $label }}</span>
-                                        @endforeach
-                                    </p>
-                                @endif
-                            </div>
-                            @if($goods->attr)
-                                <div class="attr">
-                                    @foreach($goods->attr as $attr)
-                                        <p class="list">
-                                            <span class="attr-name">{{ $attr->name }}：</span>
-                                            <span class="attr-value">{{ $attr->value }}</span>
-                                        </p>
-                                    @endforeach
+                            <div class="info">
+                                <div class="base">
+                                    <a href="{{ url('product/'.$goods->id) }}"><h2 class="name">{!! str_replace("<br />"," ",$goods->name) !!}</h2></a>
+                                    <div class="spec">
+                                        <p class="item">【規格】{{ $product_spec }}</p>
+                                        <p class="item">【成份】{{ $product_component }}</p>
+                                        <p class="item">【產地】{{ $product_manufacturer }}</p>
+                                        <p class="item">【有效期】{{ $product_valid }}</p>
+                                    </div>
+                                    {{--<p class="secret">{!! $privacy_text !!}</p>--}}
+                                    <div class="secret">
+                                    <ul class="g-icons">
+
+                                        <li>
+                                            <p class="p1"><i class="iconfont">&#xeb67;</i></p>
+                                            <p class="p2">官方正品</p>
+                                        </li>
+
+                                        <li>
+                                            <p class="p1"><i class="iconfont">&#xebb9;</i></p>
+                                            <p class="p2">隱密包裝</p>
+                                        </li>
+
+                                        <li>
+                                            <p class="p1"><i class="iconfont">&#xe60f;</i></p>
+                                            <p class="p2">當天出貨</p>
+                                        </li>
+
+                                        <li>
+                                            <p class="p1"><i class="iconfont">&#xe63f;</i></p>
+                                            <p class="p2">鄉民推薦</p>
+                                        </li>
+
+                                        <li>
+                                            <p class="p1"><i class="iconfont">&#xe624;</i></p>
+                                            <p class="p2">免費換貨</p>
+                                        </li>
+
+                                        <li>
+                                            <p class="p1"><i class="iconfont">&#xe88c;</i></p>
+                                            <p class="p2">安全結賬</p>
+                                        </li>
+
+                                    </ul>
+                                    </div>
                                 </div>
-                            @endif
-                            <div class="price">
-                                <span class="now">${{ round($goods->price) }}</span>
-                                @if($goods->market_price-$goods->price > 0)
-                                    <span class="discount deline">${{ $goods->market_price }}</span>
-                                @else
-                                    <span class="discount">官方標準售價</span>
-                                @endif
-                            </div>
 
-                            <div class="btn">
-                                <a class="checkout" data-track-section="product_list" data-track-name="product.list.checkout" href="{{ url('checkout/'.$goods->id) }}" data-observer="立即訂購-{{ $goods->name }}">立即訂購</a>
-                                <a class="goinfo" data-track-section="product_list" data-track-name="product.list.detail" href="{{ url('product/'.$goods->id) }}" data-observer="詳情-{{ $goods->name }}">更多詳情</a>
+                                <div class="buy">
+                                    <div class="price">
+                                        <span class="now">NT${{ number_format(round($goods->price)) }}</span>
+                                        @if($goods->market_price>$goods->price)
+                                        <span class="market">NT${{ number_format(round($goods->market_price)) }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="go-btn"><a href="{{ url('shopping/'.$goods->id) }}"  data-observer="點擊購買-{{ $goods->name }}">點擊購買</a></p>
+                                </div>
+
                             </div>
                         </div>
-                    </div>
+                    @endforeach
+
+
                 </div>
-            @endforeach
 
-
-
+                <div class="product-description">
+                    <p class="description-warp">
+                        {!! app('cache.config')->get('product_page_text2') !!}
+                    </p>
+                </div>
+            </div>
         </div>
-
     </div>
-</section>
+
+
 @endsection

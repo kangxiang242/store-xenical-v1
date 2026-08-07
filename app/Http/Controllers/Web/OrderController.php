@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Exceptions\MsgException;
 use App\Http\Requests\OrderStoreRequest;
 use App\Models\Product;
-use App\Repositories\FaqRepository;
 use App\Repositories\OrderRepository;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Validator;
@@ -34,56 +32,42 @@ class OrderController extends BaseController
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
     public function check(Request $request){
-        $faqs = app(FaqRepository::class)->getByUri('check');
 
         if($request->isMethod('POST')){
-            $checkType = $request->input('check_type', 'contact');
 
-            if($checkType === 'order_id'){
-                // 订单号查询（本站特有：訂單編號查詢）
-                $orderNo = trim($request->input('order_id', ''));
-                if(!$orderNo){
-                    return response()->json(['code'=>400,'message'=>'請填寫訂單編號']);
-                }
-                $orderNo = str_replace(' ', '', $orderNo);
-                if(!preg_match('/^\d{16}$/', $orderNo)){
-                    return response()->json(['code'=>400,'message'=>'訂單編號格式不正確']);
-                }
-                $order = $this->orderRepository->getByNo($orderNo);
+            if($request->no){
+                $order = $this->orderRepository->getByNo(trim($request->no));
             }else{
-                // 联络资讯查询（與 official 一致：電話 + 信箱 + 驗證碼）
                 $validator = Validator::make($request->all(), [
+                    'name' => 'required',
                     'phone' => 'required',
-                    'email' => 'required|email',
-                    'captcha_code'=>'required|captcha',
-                ],[        
-                    'phone.required'=>'請填寫聯絡電話',
-                    'email.required'=>'請填寫電子郵箱',
-                    'captcha_code.required'=>'請填寫驗證碼',
-                    'email.email'=>'郵箱格式錯誤',
-                    'captcha_code.captcha'=>'驗證碼驗證錯誤',
+                ],[
+                    'name.required'=>'請填寫訂購人姓名',
+                    'phone.required'=>'請填寫訂購電話',
                 ]);
 
                 if ($validator->fails()) {
                     $errors = $validator->errors();
                     return response()->json(['code'=>400,'message'=>$errors->first()]);
                 }
-
-                $order = $this->orderRepository->getByPhoneEmail(str_replace(' ','',$request->phone),$request->email);
+                $order = $this->orderRepository->getByNamePhone($request->name,$request->phone);
             }
 
             if($order){
                 return response()->json(['code'=>200,'message'=>'訂單查詢成功','jump'=>url('check/'.$order->no.'?source=check')]);
             }else{
                 return response()->json(['code'=>400,'message'=>'您所查詢的訂單不存在']);
+
             }
         }
 
-        return template('order.check')->with('faqs', $faqs);
+        return view('web.order.check');
     }
 
+
+
     /**
-     * 订单下单成
+     * 订单查询成功页
      * @param $no
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -94,7 +78,23 @@ class OrderController extends BaseController
         if(!$order){
             abort(404);
         }
-        return template('order.show',compact('order'));
+        return view('web.order.show',compact('order'));
+    }
+
+    /**
+     * 下单成功页
+     *
+     * @param $no
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function succeed($no)
+    {
+        $order = $this->orderRepository->getByNo($no);
+
+        if(!$order){
+            abort(404);
+        }
+        return view('web.order.succeed',compact('order'));
     }
 
     /**
@@ -107,13 +107,28 @@ class OrderController extends BaseController
             abort(404);
         }
 
-        $products = Product::where('status',1)->orderBy('sort','desc')->get();
+        //token 防止多次提交
+        $form_token = md5(time());
+        //将token存入session
+        $request->session()->put('form_token',$form_token);
+        return view('web.order.checkout',compact('form_token','goods'));
+    }
+
+    /**
+     * 兼容旧站下单页
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function checkout2(Request $request){
+        $goods = Product::where('status',1)->first();
+        if (!$goods){
+            abort(404);
+        }
 
         //token 防止多次提交
         $form_token = md5(time());
         //将token存入session
         $request->session()->put('form_token',$form_token);
-        return template('order.checkout',compact('form_token','goods','products'));
+        return view('web.order.checkout',compact('form_token','goods'));
     }
 
 
@@ -127,7 +142,7 @@ class OrderController extends BaseController
 
             $form_token = $request->input('form_token');
             if( !$request->session()->get('form_token') || $request->session()->get('form_token')!=$form_token ){
-                throw new MsgException('請勿重複提交！');
+                //throw new MsgException('請勿重複提交！');
             }
             $request->session()->put('form_token',null);
 
@@ -140,19 +155,13 @@ class OrderController extends BaseController
 
             session()->flash('flash',json_encode(['type'=>'tips','msg'=>'訂單提交成功','sub_msg'=>'我們將會儘快為您安排發貨','code'=>200,'form_data'=>request()->except('_token','_method')],JSON_UNESCAPED_UNICODE));
 
-            return response()->json([
-                'status' => 'success',
-                'redirect' => url('check/'.$order->no),
-                'order_no' => $order->no,
-            ]);
+            return response()->json(['code'=>200,'msg'=>'訂單提交成功','data'=>['id'=>$order->no]]);
         }catch (MsgException $exception){
-            Log::error('Order MsgException: '.$exception->getMessage(), ['ip'=>request()->ip(), 'data'=>request()->except('_token')]);
             return response()->json(['code'=>400,'msg'=>$exception->getMessage()],400);
         }catch (QueryException $exception){
-            Log::error('Order QueryException: '.$exception->getMessage(), ['ip'=>request()->ip(), 'sql_data'=>request()->except('_token')]);
             return response()->json(['code'=>400,'msg'=>'系統出現異常！'],400);
         }catch (\Exception $exception){
-            Log::error('Order Exception: '.$exception->getMessage(), ['ip'=>request()->ip(), 'trace'=>$exception->getTraceAsString()]);
+
             return response()->json(['code'=>400,'msg'=>'系統出現異常！'],400);
         }
 

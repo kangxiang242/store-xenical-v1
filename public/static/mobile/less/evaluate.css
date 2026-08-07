@@ -1,187 +1,181 @@
-.evaluate-container {
-  margin-top: 4rem;
-  padding-bottom: 6rem;
+.evaluate-wrapper {
+  width: 1060px;
+  margin: 0 auto;
+  margin-top: 44px;
 }
-.evaluate-container .evaluate-form {
-  margin-bottom: 7rem;
-  padding: 0 1.5rem;
+.page-title {
+  text-align: center;
+  font-weight: 500;
+  font-size: 30px;
+  margin-bottom: 40px;
 }
-.evaluate-container .evaluate-form .form-group {
-  margin-bottom: 2.6rem;
+.evaluate-form {
+  margin-bottom: 70px;
 }
-.evaluate-container .evaluate-form .form-group .title {
-  font-size: 1.6rem;
-  margin-bottom: 1.6rem;
+.evaluate-form .form-group {
+  margin-bottom: 26px;
 }
-.evaluate-container .evaluate-form .form-group .form-inline {
+.evaluate-form .form-group .title {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+.evaluate-form .form-group .form-inline {
   display: flex;
 }
-.evaluate-container .evaluate-form .form-group .form-inline .radio-inline {
-  margin-right: 2.4rem;
+.evaluate-form .form-group .form-inline .radio-inline {
+  margin-right: 24px;
 }
-.evaluate-container .evaluate-form .form-group .form-inline .radio-inline input[type=radio] {
+.evaluate-form .form-group .form-inline .radio-inline input[type=radio] {
   display: none;
 }
-.evaluate-container .evaluate-form .form-group .form-inline .radio-inline label {
-  width: 8.6rem;
-  height: 4.8rem;
+.evaluate-form .form-group .form-inline .radio-inline label {
+  width: 86px;
+  height: 48px;
   background: #D8D8D8;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.6rem;
+  border-radius: 5px;
 }
-.evaluate-container .evaluate-form .form-group .form-inline .radio-inline input[type=radio]:checked + label {
+.evaluate-form .form-group .form-inline .radio-inline input[type=radio]:checked + label {
   background: #ff9b3e;
   color: #fff;
 }
-.evaluate-container .evaluate-form .form-group .radio-row {
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
+.evaluate-form .form-group .radio-row {
+  margin-bottom: 10px;
 }
-.evaluate-container .evaluate-form .form-group .radio-row label {
-  font-size: 1.4rem;
-  margin-left: 1rem;
-}
-.evaluate-container .evaluate-form .form-group .form-control {
+.evaluate-form .form-group .form-control {
   width: 100%;
-  height: 4rem;
-  font-size: 16px;
-  border: 0.1rem solid #979797;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #979797;
   background-color: transparent;
-  padding: 0 2.6rem;
+  padding: 0 26px;
 }
-.evaluate-container .evaluate-form .form-group .form-control:focus {
+.evaluate-form .form-group .form-control:focus {
   border-color: #ff9b3e;
 }
-.evaluate-container .evaluate-form .count-btn a {
+.evaluate-form .count-btn a {
   background: #ff9b3e;
   color: #fff;
-  width: 100%;
-  height: 4rem;
+  width: 121px;
+  height: 48px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.6rem;
+  border-radius: 5px;
 }
-.evaluate-container .ending {
-  padding: 0 1.5rem;
-}
-.evaluate-container .ending .figure {
-  width: 100%;
+.figure {
+  width: 940px;
   margin: 0 auto;
-  border: 0.1rem solid #ccc;
-  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #000;
+  padding: 40px 60px;
+}
+.figure .col {
   text-align: center;
 }
-.evaluate-container .ending .figure .title {
-  font-size: 1.4rem;
+.figure .col .title {
+  font-size: 16px;
 }
-.evaluate-container .ending .figure .result {
-  font-size: 7.2rem;
+.figure .col .result .value {
+  font-size: 56px;
+  margin-top: 12px;
 }
-.evaluate-container .ending .figure .col {
-  margin-bottom: 3rem;
+.figure .col .result .success {
+  color: #ff9b3e;
 }
-.evaluate-container .ending .figure .col:last-child {
-  margin-bottom: 0;
+.figure .col .result .error {
+  color: #EA4D4D;
 }
-.evaluate-container .ending .propose {
-  margin-top: 2.4rem;
+.propose {
+  margin-top: 50px;
 }
-.evaluate-container .ending .propose .title {
-  font-size: 2.4rem;
-  margin-bottom: 2rem;
+.propose .title {
+  font-size: 32px;
 }
-.evaluate-container .ending .propose .explain {
-  font-size: 1.4rem;
+.propose .body {
+  padding-left: 60px;
+  margin-top: 20px;
+  padding-bottom: 120px;
 }
-.evaluate-container .ending .wares {
-  margin-top: 3.6rem;
-  width: 100%;
+.propose .body .explain {
+  width: 865px;
+}
+.propose .body .explain p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.propose .body .wares {
+  margin-top: 30px;
+}
+.propose .body .wares .goods {
+  width: 865px;
+  height: 260px;
   background: #FFFFFF;
-  box-shadow: 0rem 0.4rem 1.5rem 0rem rgba(0, 0, 0, 0.1);
-  border-radius: 3rem;
-  padding: 3rem 1.5rem;
-}
-.evaluate-container .ending .wares .goods {
+  box-shadow: 0px 7px 26px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 15px;
   display: flex;
+  align-items: center;
+  padding: 20px;
+  position: relative;
 }
-.evaluate-container .ending .wares .goods .img-wrap {
-  width: 14.8rem;
-  min-height: 14.8rem;
+.propose .body .wares .goods .img-wrap {
+  width: 220px;
+  height: 220px;
+  background: #D8D8D8;
+  margin-right: 50px;
 }
-.evaluate-container .ending .wares .goods .img-wrap img {
+.propose .body .wares .goods .img-wrap img {
   width: 100%;
 }
-.evaluate-container .ending .wares .goods .info {
-  margin-left: 1.5rem;
+.propose .body .wares .goods .info .goods-title {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
-.evaluate-container .ending .wares .goods .info .goods-title {
-  font-size: 2rem;
+.propose .body .wares .goods .info .tags {
+  margin-bottom: 20px;
 }
-.evaluate-container .ending .wares .goods .info .tags {
-  margin: 1.2rem 0;
-  display: flex;
-  flex-wrap: wrap;
+.propose .body .wares .goods .info .tags span {
+  font-size: 14px;
+  padding: 4px 6px;
+  margin-right: 8px;
+  display: inline-block;
+  border: 1px solid #979797;
+  border-radius: 4px;
 }
-.evaluate-container .ending .wares .goods .info .tags span {
-  padding: 0.4rem 0.8rem;
-  font-size: 1.2rem;
-  border: 0.1rem solid #979797;
-  border-radius: 0.4rem;
-  margin-bottom: 0.4rem;
+.propose .body .wares .goods .info .attrs .list {
+  font-size: 14px;
+  margin-bottom: 4px;
 }
-.evaluate-container .ending .wares .goods .info .attrs {
-  font-size: 1.2rem;
-  margin-bottom: 1.2rem;
+.propose .body .wares .goods .info .price {
+  margin-top: 20px;
 }
-.evaluate-container .ending .wares .goods .info .price {
-  margin-bottom: 2rem;
+.propose .body .wares .goods .info .price .now {
+  font-size: 20px;
 }
-.evaluate-container .ending .wares .goods .info .price span {
-  display: block;
-}
-.evaluate-container .ending .wares .goods .info .price .now {
-  font-size: 2rem;
-}
-.evaluate-container .ending .wares .goods .info .price .discount {
-  padding: 0.4rem 0.8rem;
-  font-size: 1.2rem;
+.propose .body .wares .goods .info .price .discount {
   background: #D8D8D8;
-  border-radius: 0.4rem;
+  border-radius: 4px;
+  padding: 5px 8px;
 }
-.evaluate-container .ending .wares .goods .info .go-btn {
-  width: 15.2rem;
-  height: 3.8rem;
-  border-radius: 1.9rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.propose .body .wares .goods .go-btn {
+  width: 198px;
+  height: 40px;
+  border-radius: 20px;
+  border: 1px solid #979797;
+  line-height: 40px;
+  display: block;
+  text-align: center;
+  position: absolute;
+  right: 37px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.propose .body .wares .goods .go-btn:hover {
   color: #fff;
   background-color: #ff9b3e;
-  font-size: 1.6rem;
+  border-color: #ff9b3e;
 }
-.evaluate-container .editor {
-  padding: 0 1.5rem;
-  font-size: 1.4rem;
-}
-.evaluate-container .editor h2 {
-  margin-bottom: 2rem;
-}
-.evaluate-container .editor h2 span {
-  font-size: 2.2rem !important;
-}
-.evaluate-container .editor p {
-  font-size: 1.6rem;
-  margin-bottom: 1.2rem;
-}
-.evaluate-container .editor ul {
-  list-style: disc;
-  margin: 0 0 1.5em 3em;
-}
-.evaluate-container .editor li {
-  list-style: disc;
-  margin-bottom: 1.8rem;
-}
+/*# sourceMappingURL=evaluate.css.map */

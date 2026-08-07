@@ -10,7 +10,9 @@ body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, texta
             border-collapse:collapse;
         }
         body {
-            font-family: Microsoft YaHei;
+
+            font-family: MicrosoftYaHeiLight;
+
         }
 
         ul, li {
@@ -20,6 +22,9 @@ body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, texta
         a {
             text-decoration: none;
             color: #232323;
+        }
+        a.text-underline:hover{
+            color: #0056b3!important;
         }
 
         input, textarea {

@@ -1,8 +1,4 @@
 
-function xoAreaTrack(step, status) {
-    if (window.XenicalTracker && XenicalTracker.trackAreaLoad) XenicalTracker.trackAreaLoad(step, status || 'ok');
-}
-
 
 var stores_height;
 var is_repeat = 0;
@@ -19,7 +15,7 @@ $('input[name="order_type"]').click(function(){
 
 
 function getOrderTypeVal(){
-     return $('input[name="order_type"]:checked').val();
+    return $('input[name="order_type"]:checked').val();
 }
 
 function SwitchOrderType(){
@@ -27,14 +23,12 @@ function SwitchOrderType(){
     getCity(order_type);
     if(order_type > 0){
         $("#form-address-row").hide();
-        $('#form-time-row').hide();
+        /*$('#form-time-row').hide();*/
         $("#form-store-row").show();
-        $("#order-type-title").text("配送至門店");
     }else{
         $("#form-address-row").show();
-        $('#form-time-row').show();
+        /*$('#form-time-row').show();*/
         $("#form-store-row").hide();
-        $("#order-type-title").text("配送地區");
     }
 }
 
@@ -70,11 +64,11 @@ $('#street').change(function(){
 
 function selectOption(province,id){
     if(id=='street'){
-        var _option = '<option value="">選擇路段</option>';
+        var _option = '<option value="">點我選擇路段</option>';
     }else if(id=='county'){
-        var _option = '<option value="">選擇地區</option>';
+        var _option = '<option value="">點我選擇地區</option>';
     }else{
-        var _option = '<option value="">選擇縣市</option>';
+        var _option = '<option value="">點我選擇縣市</option>';
     }
 
     for (i in province)
@@ -103,7 +97,7 @@ function getCity(type){
             }
 
             selectOption(result,'city');
-            removeLoadingEffect('#load-1'); xoAreaTrack('city','ok')
+            removeLoadingEffect('#load-1')
         }
     });
 }
@@ -126,7 +120,7 @@ function getCounty(type,city_name){
                 result = JSON.parse(result);
             }
             selectOption(result,'county');
-            removeLoadingEffect('#load-2'); xoAreaTrack('county','ok')
+            removeLoadingEffect('#load-2')
         }
     });
 }
@@ -147,18 +141,14 @@ function getRoad(type,city_name,county_name){
                 result = JSON.parse(result);
             }
             selectOption(result,'street');
-            removeLoadingEffect('#load-3'); xoAreaTrack('street','ok')
+            removeLoadingEffect('#load-3')
         }
     });
 }
 
 function getShop(type,city_name,county_name,road_name){
-    $('#store-row-main').show();
-    $('.editor-store').hide();
-    $('.stores').show();
-    var load = '<svg xmlns="http://www.w3.org/2000/svg" class="mx-auto block store-load" style="width:50px;height:11px;opacity: 0.55;position: absolute;top: 50%;transform: translate(-50%,-50%);left: 50%;" viewBox="0 0 120 30" fill="currentColor"><circle cx="15" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="60" cy="15" r="9" fill-opacity="0.3"><animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="0.5" to="0.5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="105" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle></svg>'
-    $('.show-store-shop').empty();
-    $('.show-store-shop').append(load);
+
+    selectLoadingEffect('#load-4');
     $.ajax({
         type : "GET",  //提交方式
         url : "/area/shop",//路径
@@ -170,8 +160,8 @@ function getShop(type,city_name,county_name,road_name){
             "road_name":road_name,
         },
         success : function(result) {//返回数据根据结果进行相应的处理
-            $('#form-store-row').html(result);
-            $('#form-store-row').show(); xoAreaTrack('shop','ok');
+            $('#show-store-shop').html(result);
+            removeLoadingEffect('#load-4')
         }
     });
 }
@@ -179,7 +169,7 @@ function getShop(type,city_name,county_name,road_name){
 
 function selectLoadingEffect(elem){
     $(elem).find('select').empty();
-    var load = '<svg xmlns="http://www.w3.org/2000/svg" class="mx-auto block select-load" style="width:50px;height:11px;opacity: 0.55;position: absolute;top: 50%;transform: translateY(-50%);left: 14px;" viewBox="0 0 120 30" fill="currentColor"><circle cx="15" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="60" cy="15" r="9" fill-opacity="0.3"><animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="0.5" to="0.5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="105" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle></svg>'
+    var load = '<svg xmlns="http://www.w3.org/2000/svg" class="mx-auto block select-load" style="color: var(--main-color);width:50px;height:11px;opacity: 0.65;position: absolute;top: 18px;left: 14px;" viewBox="0 0 120 30" fill="currentColor"><circle cx="15" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="60" cy="15" r="9" fill-opacity="0.3"><animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="0.5" to="0.5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="105" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle></svg>'
     $(elem).append(load);
     $(elem).attr('disabled','disabled');
 }
@@ -195,11 +185,11 @@ function removeLoadingEffect(elem){
  */
 function initialSelectStatus(type){
 
-    var _option1 = '<option value="">選擇縣市</option>';
+    var _option1 = '<option value="">點我選擇縣市</option>';
 
-    var _option2 = '<option value="">選擇地區</option>';
+    var _option2 = '<option value="">點我選擇地區</option>';
 
-    var _option3 = '<option value="">選擇路段</option>';
+    var _option3 = '<option value="">點我選擇路段</option>';
 
     if(type == 0 || type==1){
         $('#city').html(_option1);
@@ -214,7 +204,9 @@ function initialSelectStatus(type){
     }
 
     if(type == 0 || type==4){
-        $('#form-store-row').empty();
+        //$('.store-main').hide();
+        /*$('.store-main').empty();*/
+        $('#show-store-shop').html('<option value="">點我選擇門市</option>')
     }
 
 }

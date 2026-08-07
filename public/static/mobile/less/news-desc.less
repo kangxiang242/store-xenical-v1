@@ -1,143 +1,53 @@
-.news-show-wrap{
 
-    position: relative;
 
-    padding: 0 1.5rem;
-    padding-bottom: 6rem;
-    .middle{
-        position: relative;
-        margin-top: 2rem;
+.news{
 
-        .line{
-            width: 0.1rem;
-            height: 100%;
-
-            background-color: #ccc;
-            position: absolute;
-            left: 0;
-            top: 0;
+    .news-img{
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+    .news-body{
+        padding: 0 1.5rem;
+    }
+    .title{
+        font-size: 2.8rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+    }
+    .source-date{
+        margin-bottom:1rem;
+        font-size: 1.2rem;
+        a{
+            color: #0078a3;
+            text-decoration: underline;
         }
-        .time{
-            position: absolute;
-            left: 0;
-            top: 80px;
-            transform: translateX(-0.8rem);
-            background-color: #fff;
-            padding-top: 1rem;
-            color: #8c8c8c;
-            font-size: 1.4rem;
-            p{
-                writing-mode: tb-rl;
-                margin-bottom: 1rem;
-            }
-        }
-        .fluid{
-            padding-left: 3.5rem;
-            padding-bottom: 2rem;
-            .news-title{
-                font-size:2.4rem;
-                margin-bottom: 2rem;
-            }
-            .news-content{
-                img{
-                    width: 100%;
-                }
-                span{
-                    font-family: "Microsoft YaHei"!important;
-                }
+        span{
+            &:before{
+                content: "|";
+                padding: 0 6px;
             }
         }
     }
-
-
-    .article-footer {
-        margin-top: 0.6rem;
-        .relatednav {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 6rem;
+    .news-content{
+        h2,h3,h4,h5,h6{
+            margin-bottom: .6rem;
         }
-
-        .relatednav-arrow:after, .relatednav-arrow:before {
-            content: '';
+        h2{
+            font-size: 2.2rem;
+        }
+        h3{
+            font-size: 1.6rem;
+        }
+        p{
+            line-height: 1.5;
+        }
+        p,span{
+            font-size: 1.4rem!important;
+            font-family: Roboto,Helvetica Neue,Helvetica,Arial,sans-serif!important;
+        }
+        img{
+            width: 100%;
             display: block;
-            position: absolute;
-            background: #ccc;
-            transition: background .15s;
-        }
-
-
-        .relatednav-prev{
-            position: relative;
-            width: 48%;
-
-            .relatednav-arrow {
-                position: relative;
-                display: block;
-
-                transition: border-color .15s;
-                &:before {
-                    left: 0;
-                    transform: rotate(60deg);
-                    transform-origin: 50% 100%;
-                    width: 0.1rem;
-                    height: 1.6rem;
-                    bottom: 1rem;
-                }
-                &:after {
-                    width: 100%;
-                    height: 0.1rem;
-                    left: 0;
-                    bottom: 1rem;
-                }
-            }
-            .relatednav-title {
-                display: inline-block;
-                transition: text-shadow .1s;
-                font-size: 1.4rem;
-            }
-            &:hover{
-                .relatednav-title{
-                    color: #ff9b3e;
-                }
-            }
-        }
-        .relatednav-next {
-            position: relative;
-            width: 48%;
-            text-align: right;
-            .relatednav-arrow {
-                position: relative;
-                display: block;
-
-                transition: border-color .15s;
-                &:before {
-                    width: 0.1rem;
-                    height: 1.6rem;
-                    bottom: 1rem;
-
-                    right: 0;
-                    transform: rotate(-60deg);
-                    transform-origin: 50% 100%;
-
-                }
-                &:after {
-                    width: 100%;
-                    height: 0.1rem;
-                    left: 0;
-                    bottom: 1rem;
-                }
-            }
-            .relatednav-title {
-                display: inline-block;
-                transition: text-shadow .1s;
-                font-size: 1.4rem;
-            }
-            &:hover{
-                .relatednav-title{
-                    color: #ff9b3e;
-                }
-            }
         }
     }
 }

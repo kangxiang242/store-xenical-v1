@@ -1,239 +1,111 @@
-function xoTrackFail(code) {
-    if (window.XenicalTracker) XenicalTracker.markCheckoutValidationFail(code);
-}
-function xoTrackPurchase(redirect, goodsId) {
-    if (!window.XenicalTracker) return;
-    var no = '';
-    if (redirect) {
-        var parts = String(redirect).replace(/\/$/, '').split('/');
-        no = parts[parts.length - 1] || '';
+(function($){
+    $.fn.validator = function(){
+        var is_adopt =  true;
+        this.find('input,select,textarea').each(function(){
+            var _this = $(this);
+            var verify_rule = _this.attr('data-verify')
+            var verify_react = _this.attr('data-react-verify')
+            var is_react_adopt = true;
+            if(verify_react){
+                var verify_reacts = verify_react.split(":");
+                var reacts_elem = $("input[name='"+verify_reacts[0]+"'],select[name='"+verify_reacts[0]+"'],textarea[name='"+verify_reacts[0]+"']");
+                if(reacts_elem.attr('type') == 'radio'){
+                    var react_val = $("input[name='"+verify_reacts[0]+"']:checked").val();
+                    if(react_val != verify_reacts[1]){
+                        is_react_adopt = false;
+                    }
+                }
+            }
+            if(verify_rule && is_react_adopt){
+                var verify_rules = verify_rule.split('|');
+                var val = _this.val();
+                for (var i=0;i<verify_rules.length;i++){
+                    var rule = verify_rules[i];
+
+                    if(rule == 'required'){
+                        if(!val){
+                            _this.actuator('required')
+                            is_adopt = false;
+                        }
+                    }else if(rule == 'phone'){
+                        if(!(/^09\d{8}$/.test(val))){
+                            _this.actuator('phone')
+                            is_adopt = false;
+                        }
+                    }else if(rule == 'email'){
+                        var emailPattern =/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+                        if(!(emailPattern.test(val))){
+                            _this.actuator('email')
+                            is_adopt = false;
+                        }
+                    }
+                }
+
+
+            }
+        })
+
+        return is_adopt;
+    },
+    $.fn.actuator = function(rule){
+        var messages = this.attr('data-verify-message');
+        if(messages){
+            var messages_rules = messages.split('|');
+            for (var i=0;i<messages_rules.length;i++){
+                var lose_rules = messages_rules[i].split(':');
+
+                if(lose_rules[0] == rule){
+
+                    if(!this.next('.verify-tip').length){
+                        this.after('<span class="verify-tip">'+lose_rules[1]+'</span>')
+                    }
+                }
+
+
+            }
+
+        }
     }
-    XenicalTracker.conversion('purchase', { order_no: no, product_id: goodsId || $("input[name='goods_id']").val() });
-}
+})(jQuery)
+
 
 function orderStore(){
 
-    var name = $("input[name='name']").val();
-    var phone = $("input[name='phone']").val();
-    var email = $("input[name='email']").val();
-    var city = $("select[name='city']").val();
-    var county = $("select[name='county']").val();
-    var street = $("select[name='street']").val();
-    var address = $("input[name='address']").val();
-    var goods_id = $("input[name='goods_id']").val();
-    var order_type = $("input[name='order_type']:checked").val();
-    var store_id = $("input[name='store_id']:checked").val();
-    if(!name){
-        xoTrackFail('name_required');
-        $('input[name="name"]').focus().addClass('red-error');
-        $('input[name="name"]').contip({
-            align: 'right',
-            html: '請填寫收件人姓名',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 3000,
-            repeat:false,
-        }).show();
+    $('.verify-tip').remove();
 
-        return false;
-    }
-    if(!phone){
-        xoTrackFail('phone_required');
-        $('input[name="phone"]').focus().addClass('red-error');
-        $('input[name="phone"]').contip({
-            align: 'right',
-            html: '請填寫收件人聯絡電話',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 3000,
-            repeat:false,
-        }).show();
-        return false;
-    }
-    if(!(/^09\d{8}$/.test(phone))){
-        xoTrackFail('phone_invalid');
-        $('input[name="phone"]').focus().addClass('red-error');
-        $('input[name="phone"]').contip({
-            align: 'right',
-            html: '請填寫正確的聯絡電話',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 2000,
-            repeat:false,
-        }).show();
+    if(!$('#order-form').validator()){
+        Swal.fire({
+            text: '您填寫的内容有誤，請檢查并重試',
+            icon: 'error',
+            confirmButtonText: '我知道了'
+        })
         return false;
     }
 
-    if(!email){
-        xoTrackFail('email_required');
-        $('input[name="email"]').focus().addClass('red-error');
-        $('input[name="email"]').contip({
-            align: 'right',
-            html: '請填寫收件人郵箱',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 2000,
-            repeat:false,
-        }).show();
-        return false;
-    }
 
-    if(email.search(/^([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.(?:com|cn|tw|info|net)$/) == -1){
-        xoTrackFail('email_invalid');
-        $('input[name="email"]').focus();
-        $('input[name="email"]').contip({
-            align: 'right',
-            html: '請填寫正確的郵箱',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 2000,
-            repeat:false,
-        }).show();
-        return false;
-    }
 
-    if(!city){
-        xoTrackFail('city_required');
-        $("select[name='city']").addClass('red-error');
-        $("select[name='city']").contip({
-            align: 'bottom',
-            html: '請選擇縣市',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 2000,
-            repeat:false,
-        }).show();
-        return false;
-    }
 
-    if(!county){
-        xoTrackFail('county_required');
-        $("select[name='county']").addClass('red-error');
-        $("select[name='county']").contip({
-            align: 'bottom',
-            html: '請選擇地區',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 2000,
-            repeat:false,
-        }).show();
-        return false;
-    }
-    if(!street){
-        xoTrackFail('street_required');
-        $("select[name='street']").addClass('red-error');
-        $("select[name='street']").contip({
-            align: 'bottom',
-            html: '請選擇路段',
-            fade: 360,
-            opacity:0.6,
-            delay_out:100,
-            trigger:'focus',
-            auto_close: 2000,
-            repeat:false,
-        }).show();
-        return false;
-    }
-    if(order_type > 0){
 
-        if(!store_id){
-            xoTrackFail('store_required');
-            var $storeInput = $('#form-store-row input[name="store_id"]').first();
-            if ($storeInput.length) {
-                $storeInput.focus();
-                $storeInput.contip({
-                    align: 'bottom',
-                    html: '請選擇取貨門市',
-                    fade: 360,
-                    opacity:0.6,
-                    delay_out:100,
-                    trigger:'focus',
-                    auto_close: 2000,
-                    repeat:false,
-                }).show();
-            } else {
-                $('#form-store-row').contip({
-                    align: 'bottom',
-                    html: '請先選擇縣市、地區與路段以載入門市',
-                    fade: 360,
-                    opacity:0.6,
-                    delay_out:100,
-                    trigger:'focus',
-                    auto_close: 2000,
-                    repeat:false,
-                }).show();
-            }
-            return false;
-        }
 
-    }else{
-
-        if(!address){
-            xoTrackFail('address_required');
-            $('input[name="address"]').focus();
-            $('input[name="address"]').contip({
-                align: 'right',
-                html: '請填寫詳細地址',
-                fade: 360,
-                opacity:0.6,
-                delay_out:100,
-                trigger:'focus',
-                auto_close: 2000,
-                repeat:false,
-            }).show();
-            return false;
-        }
-    }
-    if(!goods_id){
-
-        return false;
-    }
-
-    addLoadingActionBtn('.submit-btn');
-
-    // 确保门店资料随订单提交
-    var storeExtra = '';
-    var $checkedStore = $('input[name="store_id"]:checked');
-    if ($checkedStore.length) {
-        storeExtra = '&store_name=' + encodeURIComponent($checkedStore.data('name') || '')
-                   + '&store_address=' + encodeURIComponent($checkedStore.data('address') || '');
-    }
+    loading(1);
 
     $.ajax({
         type: $('#order-form').attr('method'),
         url: $('#order-form').attr('action'),
-        data: $('#order-form').serialize() + storeExtra,
+        data: $('#order-form').serialize(),
         dataType: "json",
         success: function(data){
-            xoTrackPurchase(data.redirect, $("input[name='goods_id']").val());
-            window.location.href = data.redirect;
+            window.location.href = "/order/success/"+data.data.id;
         },
         error:function(jqXHR, textStatus, errorThrown){
-            var errMsg = 'server_error';
-            var httpStatus = jqXHR.status || 0;
-            try { var resp = JSON.parse(jqXHR.responseText); errMsg = resp.msg || resp.message || errMsg; } catch(e) {}
-            if (window.XenicalTracker) XenicalTracker.conversion('submit_fail', { error_code: errMsg, http_status: httpStatus, product_id: $("input[name='goods_id']").val() });
+            var response = JSON.parse(jqXHR.responseText)
             Swal.fire({
                 title: '訂單提交失敗!',
-                text: '',
+                text: response.message,
                 icon: 'error',
                 confirmButtonText: '我知道了'
             })
-            closeLoadingActionBtn('.submit-btn');
+            loading();
         }
     });
     return false;
@@ -245,30 +117,56 @@ function orderCheck(){
         return false;
     }
 
-    var email = $("input[name='email']").val();
+    var name = $("input[name='name']").val();
     var phone = $("input[name='phone']").val();
-    var captcha_code = $("input[name='captcha_code']").val();
-    if(!phone){
-        if (window.XenicalTracker) XenicalTracker.conversion('order_check_submit', { status: 'fail', error_code: 'phone_required' }, 'order_check');
-        $("input[name='phone']").focus();
-        return false;
+
+    var no = $("input[name='no']").val();
+    if(!no){
+        if(!name){
+            $("input[name='name']").focus();
+            $('input[name="name"]').contip({
+                align: 'bottom',
+                html: '請填寫訂購人姓名',
+                fade: 360,
+                opacity:0.6,
+                delay_out:100,
+                trigger:'focus',
+                auto_close: 50000,
+                repeat:false,
+            }).show();
+            return false;
+        }
+        if(!phone){
+            $("input[name='phone']").focus();
+            $('input[name="phone"]').contip({
+                align: 'bottom',
+                html: '請填寫訂購電話',
+                fade: 360,
+                opacity:0.6,
+                delay_out:100,
+                trigger:'focus',
+                auto_close: 3000,
+                repeat:false,
+            }).show();
+            return false;
+        }
+        if(!(/^09\d{8}$/.test(phone))){
+            $("input[name='phone']").focus();
+            $('input[name="phone"]').contip({
+                align: 'bottom',
+                html: '電話格式有誤',
+                fade: 360,
+                opacity:0.6,
+                delay_out:100,
+                trigger:'focus',
+                auto_close: 3000,
+                repeat:false,
+            }).show();
+            return false;
+        }
     }
-    if(!(/^09\d{8}$/.test(phone))){
-        $("input[name='phone']").focus();
-        return false;
-    }
-    if(!email){
-        $("input[name='email']").focus();
-        return false;
-    }
-    if(email.search(/^([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.(?:com|cn|tw|info|net)$/) == -1){
-        $("input[name='email']").focus();
-        return false;
-    }
-    if(!captcha_code){
-        $("input[name='captcha_code']").focus()
-        return false;
-    }
+
+
 
     addLoadingActionBtn('.form-btn');
 
@@ -279,12 +177,15 @@ function orderCheck(){
         dataType: "json",
         success: function(data){
             if(data.code == 200){
-                if (window.XenicalTracker) XenicalTracker.conversion('order_check_submit', { status: 'success' }, 'order_check');
-                promptSuccess(data.message,'正在為您跳轉中,請稍後...');
                 window.location.href = data.jump;
             }else{
-                if (window.XenicalTracker) XenicalTracker.conversion('order_check_submit', { status: 'fail', error_code: 'query_failed' }, 'order_check');
-                promptError("查詢失敗",data.message);
+
+                Swal.fire({
+                    title: '查詢失敗!',
+                    text: data.message,
+                    icon: 'error',
+                    confirmButtonText: '我知道了'
+                })
             }
             closeLoadingActionBtn('.form-btn');
             $("input[name='email']").val('');
@@ -293,9 +194,13 @@ function orderCheck(){
             $("img.captcha").click()
         },
         error:function(jqXHR, textStatus, errorThrown){
-            if (window.XenicalTracker) XenicalTracker.conversion('order_check_submit', { status: 'fail', error_code: 'server_error', http_status: jqXHR.status }, 'order_check');
             var response = JSON.parse(jqXHR.responseText)
-            promptError("查詢失敗",response.message);
+            Swal.fire({
+                title: '查詢失敗!',
+                text: response.message,
+                icon: 'error',
+                confirmButtonText: '我知道了'
+            })
             closeLoadingActionBtn('.form-btn');
         }
     });
@@ -304,46 +209,99 @@ function orderCheck(){
 }
 
 function messageStore(){
-    var name = $("input[name='name']").val();
+    var name = $("input[name='name").val();
     var phone = $("input[name='phone']").val();
     var email = $("input[name='email']").val();
     var content = $("textarea[name='content']").val();
     if(!name){
-        if (window.XenicalTracker) XenicalTracker.conversion('message_submit', { status: 'fail', error_code: 'name_required' }, 'message');
         $('input[name="name"]').focus();
-
+        $('input[name="name"]').contip({
+            align: 'bottom',
+            html: '請填寫您的昵稱',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
         return false;
     }
     if(!phone){
         $("input[name='phone']").focus();
-
+        $('input[name="phone"]').contip({
+            align: 'bottom',
+            html: '請填寫您的聯絡電話',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
         return false;
     }
     if(!(/^09\d{8}$/.test(phone))){
         $("input[name='phone']").focus();
-
+        $('input[name="phone"]').contip({
+            align: 'bottom',
+            html: '聯絡電話格式錯誤',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
         return false;
     }
     if(!email){
         $("input[name='email']").focus();
-
+        $('input[name="email"]').contip({
+            align: 'bottom',
+            html: '請填寫您的電子郵箱',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
         return false;
     }
     if(email.search(/^([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.(?:com|cn|tw|info|net)$/) == -1){
         $("input[name='email']").focus();
-
+        $('input[name="email"]').contip({
+            align: 'bottom',
+            html: '電子郵箱格式錯誤',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
         return false;
     }
 
     if(!content){
         $("textarea[name='content']").focus()
+        $('textarea[name="content"]').contip({
+            align: 'bottom',
+            html: '請填寫留言内容',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
         return false;
     }
 
     if($('.form-btn').attr('disabled')){
         return false;
     }
-
     addLoadingActionBtn('.form-btn');
 
     $.ajax({
@@ -352,28 +310,160 @@ function messageStore(){
         data: $('#message-form').serialize(),
         dataType: "json",
         success: function(data){
-            if (data.status == true){
-                if (window.XenicalTracker) XenicalTracker.conversion('message_submit', { status: 'success' }, 'message');
-                promptSuccess(data.title,data.message);
-                $("input[name='name']").val('');
+            if (data.code == 200){
+                Swal.fire({
+                    title: data.msg,
+                    text: data.sub_msg,
+                    icon: 'success',
+                    confirmButtonText: '我知道了'
+                })
+
+                $("input[name='name").val('');
                 $("input[name='phone']").val('');
                 $("input[name='email']").val('');
                 $("textarea[name='content']").val('');
             }else{
-                if (window.XenicalTracker) XenicalTracker.conversion('message_submit', { status: 'fail', error_code: 'server_reject' }, 'message');
-                promptError(data.title,data.message);
+                Swal.fire({
+                    title: data.msg,
+                    text: data.sub_msg,
+                    icon: 'error',
+                    confirmButtonText: '我知道了'
+                })
+
             }
             closeLoadingActionBtn('.form-btn');
         },
         error:function(jqXHR, textStatus, errorThrown){
-            if (window.XenicalTracker) XenicalTracker.conversion('message_submit', { status: 'fail', error_code: 'server_error', http_status: jqXHR.status }, 'message');
             var response = JSON.parse(jqXHR.responseText)
-            promptError("留言失敗",response.message);
+
+            Swal.fire({
+                title: "留言失敗!",
+                text: response.message,
+                icon: 'error',
+                confirmButtonText: '我知道了'
+            })
             closeLoadingActionBtn('.form-btn');
         }
     });
     return false;
 }
+
+function refundStore(){
+    var name = $("input[name='name").val();
+    var phone = $("input[name='phone']").val();
+    var content = $("textarea[name='content']").val();
+    if(!name){
+        $('input[name="name"]').focus();
+        $('input[name="name"]').contip({
+            align: 'bottom',
+            html: '請填寫您的昵稱',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
+        return false;
+    }
+    if(!phone){
+        $("input[name='phone']").focus();
+        $('input[name="phone"]').contip({
+            align: 'bottom',
+            html: '請填寫您的聯絡電話',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
+        return false;
+    }
+    if(!(/^09\d{8}$/.test(phone))){
+        $("input[name='phone']").focus();
+        $('input[name="phone"]').contip({
+            align: 'bottom',
+            html: '聯絡電話格式錯誤',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
+        return false;
+    }
+
+
+    if(!content){
+        $("textarea[name='content']").focus()
+        $('textarea[name="content"]').contip({
+            align: 'bottom',
+            html: '請填寫留言内容',
+            fade: 360,
+            opacity:0.6,
+            delay_out:100,
+            trigger:'focus',
+            auto_close: 3000,
+            repeat:false,
+        }).show();
+        return false;
+    }
+
+    if($('.form-btn').attr('disabled')){
+        return false;
+    }
+    addLoadingActionBtn('.form-btn');
+
+    $.ajax({
+        type: $('#refund-form').attr('method'),
+        url: $('#refund-form').attr('action'),
+        data: new FormData($("#refund-form")[0]),
+        dataType: "json",
+        processData:false,
+        contentType:false,
+        success: function(data){
+            if (data.code == 200){
+                Swal.fire({
+                    title: data.msg,
+                    text: data.sub_msg,
+                    icon: 'success',
+                    confirmButtonText: '我知道了'
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                })
+
+            }else{
+                Swal.fire({
+                    title: data.msg,
+                    text: data.sub_msg,
+                    icon: 'error',
+                    confirmButtonText: '我知道了'
+                })
+
+            }
+            closeLoadingActionBtn('.form-btn');
+        },
+        error:function(jqXHR, textStatus, errorThrown){
+            var response = JSON.parse(jqXHR.responseText)
+
+            Swal.fire({
+                title: "留言失敗!",
+                text: response.message,
+                icon: 'error',
+                confirmButtonText: '我知道了'
+            })
+            closeLoadingActionBtn('.form-btn');
+        }
+    });
+    return false;
+}
+
+
 
 function warnInfo(elem,text){
     var left = parseInt(elem.parent().css('width'))+10;
@@ -402,11 +492,6 @@ function submit(elem,options={}){
     _this.ajaxForm({
         url: _this.attr('action'), //提交地址：默认是form的action,如果申明,则会覆盖
         type: _this.attr('method'),   //默认是form的method（get or post），如果申明，则会覆盖
-        beforeSerialize: function() {
-            if(options.before){
-                options.before();
-            }
-        },
         beforeSubmit: function(){
 
             var validate_result = true;
@@ -522,7 +607,9 @@ function submit(elem,options={}){
             }
 
 
-            if(!options.before){
+            if(options.before){
+                options.before();
+            }else{
                 Swal.fire({
                     width:"50%",
                     text: "正在處理中",
@@ -542,8 +629,6 @@ function submit(elem,options={}){
             if(result.redirect){
 
                 window.location.href = result.redirect;
-            }else if(result.jump){
-                window.location.href = result.jump;
             }else{
                 if(options.success){
                     options.success(result);

@@ -30,13 +30,13 @@ footer {
   position: relative;
   margin-bottom: 10px;
   transition-duration: 0.3s;
-  border-bottom: 1px solid #ff9b3e;
+  border-bottom: 1px solid var(--main-color);
   cursor: pointer;
 }
 .fqa .fqa-body .question .item .q-title {
   height: 50px;
   line-height: 50px;
-  color: #ff9b3e;
+  color: var(--main-color);
   font-size: 18px;
 }
 .fqa .fqa-body .question .item .q-desc {
@@ -48,5 +48,6 @@ footer {
   position: absolute;
   right: 12px;
   top: 12px;
-  color: #ff9b3e;
+  color: var(--main-color);
 }
+/*# sourceMappingURL=faq.css.map */

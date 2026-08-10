@@ -28,6 +28,14 @@ Route::get('/sitemap.xml', [ApiController::class, 'sitemap']);
 Route::get('/get711', [AreaController::class, 'get711']);
 Route::post('/observer/store', [ObserverController::class, 'store']);
 
+// Admin login routes (POST login handled by Admin\LoginController)
+Route::prefix(env('ADMIN_PATH', 'ami3-17drt4-6ne634russ'))->group(function () {
+    Route::post('/login', [\App\Http\Controllers\Admin\LoginController::class, 'login'])
+        ->name('admin.login.submit');
+    Route::post('/logout', [\App\Http\Controllers\Admin\LoginController::class, 'logout'])
+        ->name('filament.' . env('ADMIN_PATH', 'ami3-17drt4-6ne634russ') . '.auth.logout');
+});
+
 // Frontend routes with device redirect
 Route::middleware(['redirect.device'])->group(function () {
     Route::get('/', [IndexController::class, 'index']);

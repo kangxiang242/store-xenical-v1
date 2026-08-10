@@ -27,7 +27,7 @@ class IndexController extends Controller
 
         $article_cate = ArticleCate::where('status',1)->orderBy('sort','desc')->limit(2)->get()->each(function($cate){
             $cate->load(['article'=>function($query){
-                $query->where('status',1)->orderBy('is_recommend','desc')->orderBy('sort','desc')->limit(3);
+                $query->where('status',1)->orderBy("is_recommend","desc")->orderBy("sort","desc")->orderBy("id","asc")->limit(3);
             }]);
         });
 

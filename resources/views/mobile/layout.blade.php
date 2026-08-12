@@ -106,7 +106,7 @@
                 <a href="javascript:;"><span class="text">Close</span><i class="iconfont">&#xeca0;</i></a>
             </div>
             <ul class="base">
-                @foreach($layout['nav'] as $nav)
+                @foreach(isset($layout['nav']) ? $layout['nav'] : [] as $nav)
                     <li class="link-parent">
                         <a class="base-link" href="{{ $nav->link?url($nav->link):"javascript:;" }}">{{ $nav->name }}@if($nav->sub && count($nav->sub))<i class="iconfont">&#xeca2;</i>@endif</a>
                         @if($nav->sub && count($nav->sub))
@@ -164,7 +164,7 @@
             @endphp
         @endif
 
-        @if($layout['banners'] && !$layout['banners']->isEmpty())
+        @if(isset($layout['banners']) && $layout['banners'] && !$layout['banners']->isEmpty())
             <section class="banner-section {{ $class }}">
                 <div class="swiper-container">
                     <div class="swiper-wrapper">

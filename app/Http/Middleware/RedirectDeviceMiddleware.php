@@ -32,10 +32,12 @@ class RedirectDeviceMiddleware
                 $url = config('app.url');
             }
 
-            $parse_url = parse_url($url);
-            if($parse_url['host'] != $request->getHost()){
+            if($url){
+                $parse_url = parse_url($url);
+                if($parse_url['host'] != $request->getHost()){
                 $n_u = $url.'/'.trim($request->path(),'/');
-                return redirect($n_u);
+                    return redirect($n_u);
+                }
             }
         }
         return $next($request);

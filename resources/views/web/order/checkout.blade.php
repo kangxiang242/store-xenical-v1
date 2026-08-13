@@ -260,7 +260,7 @@
                                 <div class="must">聯絡電話</div>
                                 <div class="content">
                                     <div class="department">
-                                        <input type="number" name="phone" pattern="[0-9]*" data-verify="required|phone" data-verify-message="required:請填寫聯絡電話|phone:聯絡電話格式錯誤,如：0912345678">
+                                        <input type="tel" name="phone" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" pattern="^09\d{8}$" title="請輸入09開頭的10位數字" data-verify="required|phone" data-verify-message="required:請填寫聯絡電話|phone:聯絡電話格式錯誤,如：0912345678">
                                     </div>
                                 </div>
                             </div>

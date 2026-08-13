@@ -239,7 +239,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="name" class="form-label">聯絡電話：</label>
-                                        <input type="text" class="form-content" name="phone" placeholder="">
+                                        <input type="tel" class="form-content" name="phone" placeholder="" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" pattern="^09\d{8}$" title="請輸入09開頭的10位數字">
                                     </div>
 
                                     <div class="form-group">

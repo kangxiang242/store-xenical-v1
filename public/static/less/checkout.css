@@ -307,6 +307,7 @@ body {
 }
 .checkout-body .unusual .group .content .department input[type="text"],
 .checkout-body .unusual .group .content .department input[type="number"],
+.checkout-body .unusual .group .content .department input[type="tel"],
 .checkout-body .unusual .group .content .department input[type="email"] {
   padding: 12px;
   border: 0;

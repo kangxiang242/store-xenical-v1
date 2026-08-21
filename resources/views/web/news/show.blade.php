@@ -15,6 +15,10 @@
 @section('style')
     @parent
     <link rel="stylesheet" type="text/css" href="{{ asset('static/less/news-desc.css') }}?ver={{ config('app.asset_version') }}"/>
+
+    @if($news->custom_css)
+        <style>{!! $news->custom_css !!}</style>
+    @endif
     <style>
         @media screen and (min-width: 1024px) {
             .guide-scroll{
@@ -109,7 +113,7 @@
                 <div class="news-body">
                     <h1 class="title">{{ $news->title }}</h1>
                     <div class="news-content">
-                        @if($news->html_file)
+                        @if($news->html_file && empty($news->content))
                             <iframe  id="external-frame" width="100%" style="min-height: 100vh" src="{{ asset_upload(str_replace('.zip','',$news->html_file).'/index.html') }}"  frameborder="0" scrolling="no" onload="setIframeHeight(this)"></iframe>
                         @else
                             {!! $news->content !!}

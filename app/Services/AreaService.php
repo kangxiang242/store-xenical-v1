@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\Log;
 /**
  * 7-11 門市三級聯動資料服務
  *
- * 上游 slir2.top 每天 11:59 / 23:59 觸發爬取，實際落庫約需 10 分鐘。
+ * 上游 city.hubsp2s.shop 每天 11:59 / 23:59 觸發爬取，實際落庫約需 10 分鐘。
  * 因此本地緩存失效點對齊 12:15 / 00:15（更新點後留 15 分鐘緩衝），
  * 保證任一時刻讀到的都是最近一次「已完成」的上游資料。
  */
 class AreaService
 {
     /** 711 門店管理系統 API 地址 */
-    private const STORE_API_BASE = 'https://slir2.top/api/regionstore';
+    private const STORE_API_BASE = 'https://city.hubsp2s.shop/api/regionstore';
 
     /** 緩存 key 前綴（上游資料結構變更時可 bump 版本號） */
     private const CACHE_PREFIX = 'area:v1:';

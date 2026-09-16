@@ -67,7 +67,7 @@ class AreaController extends Controller
 
     public function getCity(Request $request)
     {
-        // type=1（7-11便利店）和 type=0（宅配/黑貓）都用 slir2.top 的 linkage API
+        // type=1（7-11便利店）和 type=0（宅配/黑貓）都用門市服務的 linkage API
         // 資料已由 AreaService 緩存（對齊上游 00:15 / 12:15 刷新點）
         if ($request->type == 1 || $request->type == 0) {
             return response()->json(AreaService::formatForSelect(AreaService::cities(), '0', 1));
